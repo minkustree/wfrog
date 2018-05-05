@@ -42,12 +42,12 @@ class WH1080Station(object):
     name = 'Fine Offset WH1080 and compatibles'
 
     def run(self, generate_event, send_event, context={}):
-        from pywws import WeatherStation
+        import pywws.weatherstation
 
         # cyclic try connecting to weather station (when USB is disconnected)
         while True:
             try:
-                station = WeatherStation.weather_station()
+                station = pywws.weatherstation.WeatherStation()
 
                 for data, last_ptr, logged in station.live_data():
 
