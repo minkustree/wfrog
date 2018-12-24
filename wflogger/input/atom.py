@@ -17,7 +17,7 @@
 ##  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-import base
+from . import base
 import time
 import datetime
 
@@ -105,7 +105,7 @@ def feedparser_unknown_starttag(self, tag, attrs):
     if self.incontent:
         tag = tag.split(':')[-1]
         return self.handle_data('<%s%s>' % (tag, ''.join([' %s="%s"' % t for t in attrs])), escape=0)
-    if tag.find(':') <> -1:
+    if tag.find(':') != -1:
         prefix, suffix = tag.split(':', 1)
     else:
         prefix, suffix = '', tag
@@ -124,7 +124,7 @@ def feedparser_unknown_starttag(self, tag, attrs):
         return self.push(prefix + suffix, 1)
 
 def feedparser_unknown_endtag(self, tag):
-    if tag.find(':') <> -1:
+    if tag.find(':') != -1:
         prefix, suffix = tag.split(':', 1)
     else:
         prefix, suffix = '', tag

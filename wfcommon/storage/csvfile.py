@@ -130,7 +130,7 @@ class CsvStorage(object):
             if last_pos + offset < 0:
                 break
 
-            file.seek(offset, os.SEEK_CUR)
+            file.seek(last_pos + offset, os.SEEK_SET)
             (current_timestamp, shift) = self._get_timestamp(file)
 
             if current_timestamp is None:
@@ -159,12 +159,12 @@ class CsvStorage(object):
         timestamp_string = file.read(self.timestamp_length)
         if(timestamp_string.strip() == ''): # End of file
             return (None, 0)
-        file.seek(-self.timestamp_length, os.SEEK_CUR)
+        file.seek(file.tell()-self.timestamp_length, os.SEEK_SET)
         return ( int(timestamp_string), shift)
 
 
 def dump(value, context):
-    print repr(value)
+    print(repr(value))
 
 
 if __name__ == '__main__':
@@ -178,7 +178,7 @@ if __name__ == '__main__':
     f = s._position_cursor(timestamp)
 
     if f is not None:
-        print f.readline()
+        print(f.readline())
         f.close()
 
     s = CsvStorage()
@@ -191,4 +191,4 @@ if __name__ == '__main__':
         to_time=datetime.strptime('2010-03-22 23:00:35', format))
 
     for i in samples:
-        print repr(i)
+        print(repr(i))

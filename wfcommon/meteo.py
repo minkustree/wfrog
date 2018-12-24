@@ -432,10 +432,10 @@ def WindPredominantDirection(l):
     obtained by wind speed vectors composition.
     """
     # Step 1: (speed, dir) -> (speed, speedX, speedY)
-    l1 = map(lambda (v,d): (WindX(v,d), WindY(v,d)), l)
+    l1 = [(WindX(v_d[0],v_d[1]), WindY(v_d[0],v_d[1])) for v_d in l]
 
     # Step 2: Calculate averages of speed, speedX, and speedY
-    [avg_x, avg_y] = map(lambda L: sum(L)/len(L), zip(* l1))
+    [avg_x, avg_y] = [sum(L)/len(L) for L in zip(* l1)]
 
     # Step 3: return average speed, composite average speed and composite wind direction
     return WindDir(avg_x, avg_y)

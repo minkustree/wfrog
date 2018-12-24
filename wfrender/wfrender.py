@@ -24,7 +24,7 @@ import os.path
 import sys
 if __name__ == "__main__": sys.path.append(os.path.abspath(sys.path[0] + '/..'))
 
-import config
+from . import config
 import copy
 import optparse
 import logging
@@ -111,13 +111,13 @@ logging [logging configuration] (optional):
         except KeyboardInterrupt:
             self.logger.info("Stopping daemon...")
             return
-        except AssertionError, e:
+        except AssertionError as e:
             if logging.root.level > logging.DEBUG:
                 self.logger.exception(e)
                 return
             else:
                 raise
-        except Exception, e:
+        except Exception as e:
             self.logger.exception(e)
             raise
         finally:
@@ -130,5 +130,5 @@ if __name__ == "__main__":
     engine = RenderEngine()
     result = engine.process("config/wfrender.yaml", embedded=False)
     if engine.output:
-        print str(result)
+        print(str(result))
     engine.logger.debug("Finished main()")

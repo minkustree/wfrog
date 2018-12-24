@@ -48,7 +48,7 @@ class WS2300Station(object):
     def run(self, generate_event, send_event, context={}):
     
         import ws2300   
-        print(dir(ws2300))
+        print((dir(ws2300)))
         
         while True:
             serialPort = ws2300.LinuxSerialPort(self.port)
@@ -113,7 +113,7 @@ class WS2300Station(object):
                 e.gust.dir = data[9]
                 send_event(e)                        
                 
-            except Exception, e:
+            except Exception as e:
                 self.logger.error(e)
                 
             # pause until next update time

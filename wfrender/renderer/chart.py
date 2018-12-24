@@ -30,7 +30,7 @@ from pygooglechart import SimpleLineChart
 from math import log
 import math
 import wfcommon.units
-import webcolors
+from . import webcolors
 import re
 import copy
 import logging
@@ -49,11 +49,23 @@ def rmin(a,b):
     return result
 
 def amin(a):
-    m=sys.maxint
+    m=sys.maxsize
     for i in a:
         if not i == None and i < m:
             m=i
     return m
+
+# make max robust to None
+def rmax(a, b, *args, **kwargs):
+    if a == None:
+        return b
+    if b == None:
+        return a
+    return max(a, b)
+
+def amax(a, *args, **kwargs):
+    return max([x for x in a if x != None], *args, **kwargs)
+
 
 # Default configuration
 class ChartConfig(object):
@@ -234,7 +246,7 @@ class GoogleChartRenderer(object):
 
         # merge builtin defaults, context and renderer config
         config = ChartConfig()
-        if context.has_key('chart'):
+        if 'chart' in context:
             config.__dict__.update(context['chart'])
         config.__dict__.update(self.__dict__)
 
@@ -245,18 +257,18 @@ class GoogleChartRenderer(object):
         legend_set = False
         legend = []
 
-        chart_min = sys.maxint
-        chart_max = -sys.maxint
+        chart_min = sys.maxsize
+        chart_max = -sys.maxsize
 
         # Prepare series config
         ordered_series = []
-        for key, serie in self.series.iteritems():
+        for key, serie in self.series.items():
             serie_config = ChartConfig()
             serie_config.__dict__.update(config.__dict__)
             serie_config.__dict__.update(serie)
             ordered_series.append( (serie_config.order, key, serie) )
 
-        ordered_series.sort( cmp=lambda x,y: cmp(x[0],y[0]) )
+        ordered_series.sort( key=lambda x: x[0] )
 
         ordered_keys = []
         for order, key, serie in ordered_series:
@@ -286,7 +298,7 @@ class GoogleChartRenderer(object):
                 min_index = serie_data.index(min_data)
             else:
                 min_index = None
-            max_data = max(serie_data)
+            max_data = amax(serie_data)
             chart_max = max(chart_max, max_data)
             if serie_data.__contains__(max_data):
                 max_index = serie_data.index(max_data)
@@ -368,7 +380,7 @@ class GoogleChartRenderer(object):
 
         if config.axes:
             range_min_ref_units = 0
-            if not chart_min == sys.maxint and not chart_max == -sys.maxint:
+            if not chart_min == sys.maxsize and not chart_max == -sys.maxsize:
                 range_min = chart_min-config.ymargin[0]
                 range_max = chart_max+config.ymargin[1]
                 range_min_target_units = math.floor(converter.convert(measure, range_min))
@@ -508,7 +520,7 @@ class GoogleChartWindRadarRenderer(object):
 
         # Prepare config
         config = ChartConfig()
-        if context.has_key('chart'):
+        if 'chart' in context:
             config.__dict__.update(context['chart'])
         config.__dict__.update(self.__dict__)
 
@@ -572,18 +584,18 @@ class GoogleChartWindRadarRenderer(object):
 
         max = config.median * 2
 
-        if data[self.key].has_key('sectors'):
+        if 'sectors' in data[self.key]:
             sector_data = data[self.key]['sectors'] # 'old' sector from db datasource
         else:
-            if data.has_key(self.sector_key): # 'new' sector data from accumulator
+            if self.sector_key in data: # 'new' sector data from accumulator
                 sector_data = self.calculate_accumulated_sector_data(data[self.sector_key]['series'])
             else:
-                if data[self.key].has_key('series'):
+                if 'series' in data[self.key]:
                     sector_data = self.calculate_cheap_sector_data(data[self.key]['series'])
                 else:
                     sector_data = None
 
-        if data[self.key].has_key('value'):
+        if 'value' in data[self.key]:
             current_noscale = data[self.key]['value']
             last_gust_noscale = data[self.key]['max']
             pos = int(round(data[self.key]['deg'] * 16 / 360.0))
@@ -611,7 +623,7 @@ class GoogleChartWindRadarRenderer(object):
         last_gust = [0] * 16
         head = [0] * 16
 
-        if data[self.key].has_key('value'):
+        if 'value' in data[self.key]:
             line[pos] = max if current > 0 else 0
             tail[pos] = current
             last_gust[pos] = last_gust_scaled
@@ -634,7 +646,7 @@ class GoogleChartWindRadarRenderer(object):
             chart.add_marker(3, -1, "v", _valid_color(bars_config.color), bars_config.thickness, -1)
 
         if config.beaufort:
-            chart.add_marker(0, "220:0.9", "@t"+str(int(round(wfcommon.units.MpsToBft(current_noscale)))), _valid_color(beaufort_config.color) + "%02x" % (beaufort_config.intensity*255), rmin(config.height, config.width)-config.size*5, -1)
+            chart.add_marker(0, "220:0.9", "@t"+str(int(round(wfcommon.units.MpsToBft(current_noscale)))), _valid_color(beaufort_config.color) + "%02x" % int(beaufort_config.intensity*255), rmin(config.height, config.width)-config.size*5, -1)
 
         colors = ["00000000",
             _valid_color(tail_config.color),
@@ -689,14 +701,14 @@ class GoogleChartWindRadarRenderer(object):
         if config.axes:
             chart.set_axis_labels(Axis.BOTTOM, ['N', '', 'NE', '', 'E', '', 'SE', '', 'S', '', 'SW', '', 'W', '', 'NW', ''])
             chart.set_axis_style(0, _valid_color(config.text), config.size, 0, 'l', _valid_color(config.bgcolor));
-        if data[self.key].has_key('value'):
+        if 'value' in data[self.key]:
             chart.set_line_style(1, tail_config.thickness)
         else:
             chart.set_line_style(1, 0)
         chart.set_line_style(2, lines_config.thickness)
         chart.set_line_style(3, lines_config.thickness)
         chart.set_line_style(4, 0)
-        if data[self.key].has_key('value'):
+        if 'value' in data[self.key]:
             chart.set_line_style(5, arrow_thickness)
             chart.set_line_style(6, arrow_thickness)
         else:
@@ -930,4 +942,4 @@ if __name__=="__main__":
                     }
 
     r = GoogleChartWindRadarRenderer()
-    print r.calculate_cheap_sector_data(serie_data)
+    print(r.calculate_cheap_sector_data(serie_data))

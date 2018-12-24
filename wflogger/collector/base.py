@@ -82,7 +82,7 @@ class BaseCollector(object):
                 return self._mean_temp
         try:
 
-            average = AverageFormula(self.storage.keys().index('temp'))
+            average = AverageFormula(list(self.storage.keys()).index('temp'))
 
             for sample in self.storage.samples(datetime.datetime.now() - datetime.timedelta(hours=12), context=context):
                 average.append(sample)
@@ -93,7 +93,7 @@ class BaseCollector(object):
             self._mean_temp_last_time = datetime.datetime.now()
             self.logger.info("Calculated last 12 hours mean temp: %4.1f" % self._mean_temp)
             return self._mean_temp
-        except Exception, e:
+        except Exception as e:
             self.logger.warning("Error calculating last 12 hours mean temp: %s, returning current temperature" % str(e))
             return current_temp
 

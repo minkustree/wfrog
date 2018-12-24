@@ -18,21 +18,21 @@
 
 import yaml
 
-import function
-import stdio
-import http
-import atom
+from . import function
+from . import stdio
+from . import http
+from . import atom
 
 # YAML mappings
 
 class YamlFunctionInput(function.FunctionInput, yaml.YAMLObject):
-    yaml_tag = u'!function'
+    yaml_tag = '!function'
 
 class YamlStdioInput(stdio.StdioInput, yaml.YAMLObject):
-    yaml_tag = u'!stdio-in'
+    yaml_tag = '!stdio-in'
 
 class YamlHttpInput(http.HttpInput, yaml.YAMLObject):
-    yaml_tag = u'!http-in'
+    yaml_tag = '!http-in'
 
 class YamlAtomInput(atom.AtomInput, yaml.YAMLObject):
-    yaml_tag = u'!atom-in'
+    yaml_tag = '!atom-in'

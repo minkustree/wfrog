@@ -19,8 +19,8 @@ import math
 import logging
 import sys
 import time
-import httplib
-import urllib
+import http.client
+import urllib.request, urllib.parse, urllib.error
 import base64
 
 from wfcommon.formula.base import LastFormula
@@ -29,7 +29,7 @@ from wfcommon.formula.base import SumFormula
 
 try:
     from wfrender.datasource.accumulator import AccumulatorDatasource
-except ImportError, e:
+except ImportError as e:
     from datasource.accumulator import AccumulatorDatasource
 
 class OpenWeatherMapPublisher(object):
@@ -133,8 +133,8 @@ class OpenWeatherMapPublisher(object):
                 try:
                     data = accu.execute()['current']['series']
                     index = len(data['lbl'])-1
-                    rain_1h = sum(map(lambda x: x if x is not None else 0, accu60min.execute()['current']['series']['rain'][:60]))
-                    rain_24h = sum(map(lambda x: x if x is not None else 0, accu24h.execute()['current']['series']['rain'][:24]))
+                    rain_1h = sum([x if x is not None else 0 for x in accu60min.execute()['current']['series']['rain'][:60]])
+                    rain_24h = sum([x if x is not None else 0 for x in accu24h.execute()['current']['series']['rain'][:24]])
 
                     if last_timestamp == None or last_timestamp < data['utctime'][index]:
                         last_timestamp = data['utctime'][index]
@@ -161,7 +161,7 @@ class OpenWeatherMapPublisher(object):
                         if self.send_radiation: 
                             args['lum'] = str(data['solar_rad'][index])
  
-                        self.logger.debug("Publishing openweathermap data: %s " % urllib.urlencode(args))
+                        self.logger.debug("Publishing openweathermap data: %s " % urllib.parse.urlencode(args))
                         response = self._publish(args, 'openweathermap.org', '/data/post')
 
                         if response[0] == 200:
@@ -170,7 +170,7 @@ class OpenWeatherMapPublisher(object):
                         else:
                             self.logger.error('Error publishing data. Code: %s Status: %s Answer: %s' % response)
 
-                except Exception, e:
+                except Exception as e:
                     if (str(e) == "'NoneType' object has no attribute 'strftime'") or (str(e) == "a float is required"):
                         self.logger.error('Could not publish: no valid values at this time. Retry next run...')
                     else:
@@ -178,7 +178,7 @@ class OpenWeatherMapPublisher(object):
 
                 time.sleep(60) # each minute we check for new records to send to openweathermap
 
-        except Exception, e:
+        except Exception as e:
             self.logger.exception(e)
             raise
 
@@ -187,16 +187,16 @@ class OpenWeatherMapPublisher(object):
 
     def _publish(self, args, server, uri):
 
-      uri = uri + "?" + urllib.urlencode(args)
+      uri = uri + "?" + urllib.parse.urlencode(args)
       
       self.logger.debug('Connect to: http://%s' % server)
       self.logger.debug('GET %s' % uri)
 
       auth = base64.encodestring("%s:%s" % (self.username, self.password))
 
-      conn = httplib.HTTPConnection(server)
+      conn = http.client.HTTPConnection(server)
       if not conn:
-         raise Exception, 'Remote server connection timeout!'
+         raise Exception('Remote server connection timeout!')
 
       conn.request("GET", uri, headers = {"Authorization" : "Basic %s" % auth})
       conn.sock.settimeout(30.0)  # 30 seconds timeout 
@@ -205,7 +205,7 @@ class OpenWeatherMapPublisher(object):
       data = (http.status, http.reason, http.read())
       conn.close()
       if not (data[0] == 200 and data[1] == 'OK'):
-         raise Exception, 'Server returned invalid status: %d %s %s' % data
+         raise Exception('Server returned invalid status: %d %s %s' % data)
       return data
 
 

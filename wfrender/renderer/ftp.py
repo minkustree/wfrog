@@ -68,7 +68,7 @@ class FtpRenderer(object):
 
         files= {}
 
-        for key in self.renderers.keys():
+        for key in list(self.renderers.keys()):
             self.logger.info("Rendering %s" % key)
             files[key] = self.renderers[key].render(data=data, context=context)
 
@@ -84,7 +84,7 @@ class FtpRenderer(object):
                 if self.directory is not None:
                     self.logger.debug("Moving to directory %s" % self.directory)
                     ftp.cwd(self.directory)
-                for remote_file, local_file in files.iteritems():
+                for remote_file, local_file in files.items():
                     self.logger.debug("Sending %s to %s" % (local_file, remote_file))
                     if os.path.exists(local_file):
                         f = open(local_file, 'r')
@@ -95,7 +95,7 @@ class FtpRenderer(object):
                         self.logger.error("Local file %s does not exist, skipping..." % local_file) 
                 ftp.quit()
                 break
-            except Exception, e:
+            except Exception as e:
                 try:
                     ftp.close()
                 except:

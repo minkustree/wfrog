@@ -28,7 +28,7 @@ from wfcommon.formula.base import MinFormula
 from wfcommon.formula.base import MaxFormula
 try:
     from wfrender.datasource.accumulator import AccumulatorDatasource
-except ImportError, e:
+except ImportError as e:
     from datasource.accumulator import AccumulatorDatasource
 from wfcommon.units import MpsToKmh
 
@@ -125,7 +125,7 @@ class MeteoclimaticRenderer(object):
                          'wind_deg' : LastFormula('wind_dir'),
                          'time' : LastFormula('localtime') } }
 
-                if 'solar_rad' in self.storage.keys():
+                if 'solar_rad' in list(self.storage.keys()):
                     self.accuD.formulas['current']['solar_rad'] = LastFormula('solar_rad')
 
             self.logger.info("Calculating ...")
@@ -143,7 +143,7 @@ class MeteoclimaticRenderer(object):
 
             return ['text/plain', template]
 
-        except Exception, e:
+        except Exception as e:
             self.logger.warning("Error rendering meteoclimatic data: %s" % str(e))
             if self.lastTemplate == None:
                 return ['text/plain', "*VER=DATA2*COD=%s*EOT*" % self.id]
@@ -160,7 +160,7 @@ class MeteoclimaticRenderer(object):
                self._format(data['wind_deg'][index]), 
                self._format(data['pressure'][index]), 
                self._format(data['hum'][index]),
-               self._format(data['solar_rad'][index], '') if 'solar_rad' in self.storage.keys() else '' )
+               self._format(data['solar_rad'][index], '') if 'solar_rad' in list(self.storage.keys()) else '' )
         self.logger.debug("Calculating current data (index: %d): %s" % (index, template))
         return template
 

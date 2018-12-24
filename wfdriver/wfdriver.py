@@ -23,16 +23,16 @@ import os.path
 import sys
 if __name__ == "__main__": sys.path.append(os.path.abspath(sys.path[0] + '/..'))
 
-import station
-import output
+from . import station
+from . import output
 import wfcommon.generic
-from output import stdio
+from .output import stdio
 import optparse
 import logging
 import wfcommon.config
 from threading import Thread
-from Queue import Queue, Full
-import event
+from queue import Queue, Full
+from . import event
 
 def gen(type):
     e = event.Event(type)
@@ -84,9 +84,9 @@ logging [logging configuration] (optional):
         # Initialize the driver from object trees
         self.station = config['station']
 
-        if config.has_key('output'):
+        if 'output' in config:
             self.output = config['output']
-        if config.has_key('queue_size'):
+        if 'queue_size' in config:
             self.queue_size = config['queue_size']
 
         self.event_queue = Queue(self.queue_size)

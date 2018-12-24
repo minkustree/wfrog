@@ -18,21 +18,21 @@
 
 import yaml
 
-import aggregator
-import flush
-import xmlfile
-import buffer
+from . import aggregator
+from . import flush
+from . import xmlfile
+from . import buffer
 
 # YAML mappings
 
 class YamlAggregatorCollector(aggregator.AggregatorCollector, yaml.YAMLObject):
-    yaml_tag = u'!aggregator'
+    yaml_tag = '!aggregator'
 
 class YamlFlushCollector(flush.FlushCollector, yaml.YAMLObject):
-    yaml_tag = u'!flush'
+    yaml_tag = '!flush'
 
 class YamlBufferCollector(buffer.BufferCollector, yaml.YAMLObject):
-    yaml_tag = u'!buffer'
+    yaml_tag = '!buffer'
 
 class YamlXmlFileCollector(xmlfile.XmlFileCollector, yaml.YAMLObject):
-    yaml_tag = u'!xmlfile'
+    yaml_tag = '!xmlfile'

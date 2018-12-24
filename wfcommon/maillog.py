@@ -43,7 +43,7 @@ class mySMTPHandler(logging.handlers.SMTPHandler):
         logging.handlers.SMTPHandler.__init__(self, mailhost, fromaddr, toaddrs, subject)
  
         # Python 2.5 SMTPHAndler object does not admit login credentials
-        if type(credentials) == types.TupleType:
+        if type(credentials) == tuple:
             self.username, self.password = credentials
         else:
             self.username = None
@@ -99,7 +99,7 @@ if __name__ == '__main__':
     logger.addHandler(handler)
 
 
-    print "Testing critical e-mail"
+    print("Testing critical e-mail")
     logger.critical('This is a test ... you should be reading this inside a new email')
     
 

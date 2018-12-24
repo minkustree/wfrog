@@ -67,7 +67,7 @@ class StorageCopy(object):
 
     def run(self):
 
-        keys = self.from_storage.keys()
+        keys = list(self.from_storage.keys())
         n = 0
 
         for sample in self.from_storage.samples():

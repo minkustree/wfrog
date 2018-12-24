@@ -53,20 +53,20 @@ handlers [dict]:
 
         level = logging.INFO
 
-        if config.has_key('logging'):
+        if 'logging' in config:
 
             logging_config = config['logging']
 
-            if logging_config.has_key('level'):
+            if 'level' in logging_config:
                 level = levels[logging_config['level']]
 
-            if logging_config.has_key('format'):
+            if 'format' in logging_config:
                 formatter = logging.Formatter(logging_config['format'])
 
-            if logging_config.has_key('handlers'):
+            if 'handlers' in logging_config:
                 handlers_config = logging_config['handlers']
 
-                for handler_config in handlers_config.values():
+                for handler_config in list(handlers_config.values()):
                     handler = handler_config['handler']
 
                     # Hack to bypass !include element because log handlers are not class instances
@@ -76,7 +76,7 @@ handlers [dict]:
                         while hasattr(handler, '_init'):
                             handler = handler._init(context)
 
-                    if handler_config.has_key('level'):
+                    if 'level' in handler_config:
                         handler.setLevel(levels[handler_config['level']])
 
                     handler.setFormatter(formatter)
@@ -86,7 +86,7 @@ handlers [dict]:
             # If no handler is specified, by default a RotatingFileHandler with a 
             # {$process.log} filename  (see issue 85)
             else:
-                filename = logging_config['filename'] if logging_config.has_key('filename') else 'wfrog'
+                filename = logging_config['filename'] if 'filename' in logging_config else 'wfrog'
  
                 # Bypass !user elements
                 if hasattr(filename, '_init'):

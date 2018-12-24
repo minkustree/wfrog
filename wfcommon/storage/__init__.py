@@ -18,25 +18,25 @@
 
 import yaml
 
-import csvfile
-import firebird
-import mysql
-import sqlite3
-import simulator
+from . import csvfile
+from . import firebird
+from . import mysql
+from . import sqlite3
+from . import simulator
 
 # YAML mappings
 
 class YamlCsvStorage(csvfile.CsvStorage, yaml.YAMLObject):
-    yaml_tag = u'!csv'
+    yaml_tag = '!csv'
 
 class YamlFirebirdStorage(firebird.FirebirdStorage, yaml.YAMLObject):
-    yaml_tag = u'!firebird'
+    yaml_tag = '!firebird'
 
 class YamlMysqlStorage(mysql.MysqlStorage, yaml.YAMLObject):
-    yaml_tag = u'!mysql'
+    yaml_tag = '!mysql'
 
 class YamlSqlite3Storage(sqlite3.Sqlite3Storage, yaml.YAMLObject):
-    yaml_tag = u'!sqlite3'
+    yaml_tag = '!sqlite3'
 
 class YamlSimulatorStorage(simulator.SimulatorStorage, yaml.YAMLObject):
-    yaml_tag = u'!simulator-storage'
+    yaml_tag = '!simulator-storage'

@@ -49,7 +49,7 @@ class DatabaseStorage(object):
                   ', '.join(self.storage_fields), 
                   "'%s'" % utc_time.strftime(self.time_format),
                   "'%s'" % sample['localtime'].strftime(self.time_format),
-                  ', '.join(map(lambda x: self.format(sample[x.lower()] if x.lower() in sample else None), self.storage_fields)))
+                  ', '.join([self.format(sample[x.lower()] if x.lower() in sample else None) for x in self.storage_fields]))
         try:
             self.db.connect()
             self.db.execute(sql)
@@ -61,7 +61,7 @@ class DatabaseStorage(object):
 
 
     def keys(self, context={}):
-        return ['utctime', 'localtime'] + map(str.lower ,self.storage_fields) 
+        return ['utctime', 'localtime'] + list(map(str.lower ,self.storage_fields)) 
 
 
     def samples(self, from_time=datetime.fromtimestamp(0), to_time=datetime.now(), context={}):

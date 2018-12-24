@@ -5,7 +5,7 @@ from wfdriver import Driver
 from output import call
 
 def out(event):
-    print '> '+str(event)
+    print('> '+str(event))
 
 call.call = out
 Driver.DEFAULT_CONFIG='call-test.yaml'

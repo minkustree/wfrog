@@ -42,7 +42,7 @@ class DataTableRenderer(object):
 
     def render(self,data={}, context={}):
         if self.source != None:
-	    new_data = self.source.execute(data=data, context=context)
+            new_data = self.source.execute(data=data, context=context)
         else:
            new_data = data
         result = {}
@@ -50,13 +50,13 @@ class DataTableRenderer(object):
         converter = wfcommon.units.Converter(context["units"])
 
         label_key = 'lbl' + str(self.label) if self.label > 1 else 'lbl'
-        for measure in new_data.keys():
+        for measure in list(new_data.keys()):
             if measure != 'sectors' and type(new_data[measure]) == dict:
                 lbls = new_data[measure]['series'][label_key]
                 for lbl in lbls:
                     if not lbl in result:
                         result[lbl] = {}
-                for (serie, values) in new_data[measure]['series'].iteritems():
+                for (serie, values) in new_data[measure]['series'].items():
                     if serie[:3] != 'lbl':
                         for i in range(len(lbls)):
                             if serie == 'count':  # Unit conversion cannot be applied to count formula

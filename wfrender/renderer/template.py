@@ -69,7 +69,7 @@ class TemplateRenderer(object):
         if self.debug:
             self.logger.debug(pformat(content))
         
-        if context.has_key('_yaml_config_file'):        
+        if '_yaml_config_file' in context:        
             dir_name = os.path.dirname(context['_yaml_config_file'] )
             abs_path=os.path.join(dir_name, self.path)
         else:
@@ -81,6 +81,6 @@ class TemplateRenderer(object):
         # 1st time compile template
         if not self.compiled_template: 
             self.logger.debug("Compiling template "+abs_path)
-            self.compiled_template = Template.compile(file=file(abs_path, "r"))
+            self.compiled_template = Template.compile(file=open(abs_path, "r"))
 
         return [ self.mime, str(self.compiled_template(searchList=[content, context])) ]

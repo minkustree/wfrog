@@ -17,8 +17,8 @@
 ##  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-import base
-from StringIO import StringIO
+from . import base
+from io import StringIO
 import sys
 
 class StdioInput(base.XmlInput):

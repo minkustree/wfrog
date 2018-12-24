@@ -1,8 +1,8 @@
 import sys
 import optparse
-from StringIO import StringIO
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-from Queue import Queue
+from io import StringIO
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from queue import Queue
 from threading import Thread
 
 # The event queue decoupling the logger thread and the listener receiving events
@@ -45,7 +45,7 @@ def logger_loop():
         event = event_queue.get(block=True)
         if(event == "stop"):
             break
-        print event.__dict__
+        print(event.__dict__)
 
 ##############################################
 # Example listening on stdin, e.g. for pipe communication

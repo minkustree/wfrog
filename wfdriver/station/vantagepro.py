@@ -96,7 +96,7 @@ class VantageProStation(object):
                     e.gust.dir = rec['WindHiDir']                                    
                 send_event(e)
 
-            except Exception, e:
+            except Exception as e:
                 self.logger.error(e)
 
             # pause until next update time

@@ -45,8 +45,8 @@ GLOBAL_CONF_DIR = '/etc/wfrog/'
 SETTINGS_DEF=os.path.normpath(WFROG_HOME+'/wfcommon/config/settings-definition.yaml')
 
 if sys.platform == 'win32':
-    import _winreg
-    HOME_WFROG_DIR = _winreg.ExpandEnvironmentStrings(u'%APPDATA%\\Wfrog\\')
+    import winreg
+    HOME_WFROG_DIR = winreg.ExpandEnvironmentStrings('%APPDATA%\\Wfrog\\')
 else:
     HOME_WFROG_DIR = os.path.expanduser("~"+getpass.getuser())+'/.wfrog/'
 
@@ -133,6 +133,6 @@ if options.setup or settings is None:
         if options.setup:
             sys.exit(0)
         else:
-            print "Now starting wfrog. Standard config serves on http://localhost:7680/."
+            print("Now starting wfrog. Standard config serves on http://localhost:7680/.")
 
 component.run(config_file, settings)

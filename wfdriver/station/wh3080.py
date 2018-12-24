@@ -109,9 +109,9 @@ class WH3080Station(object):
                         e.value = (meteo.convert_illuminance_wm2(data['illuminance']))
                         send_event(e)
 
-                except Exception, e:
+                except Exception as e:
                     self.logger.error(e)
 
 
-                except Exception, e:
+                except Exception as e:
                     self.logger.error(e)

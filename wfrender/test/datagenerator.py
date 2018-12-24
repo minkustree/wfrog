@@ -12,7 +12,7 @@ def main():
     now = time.time()
     for i in range (0, 10000):
         writeDB(db, time.localtime(now+(600*i)))
-        print i
+        print(i)
 
 def writeDB(db, t):
     sql = """

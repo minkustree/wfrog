@@ -23,12 +23,12 @@ import hashlib
 import wfcommon.database
 from wfcommon.formula.base import LastFormula
 from wfcommon.formula.base import SumFormula
-from httplib import HTTPConnection
-from urllib import urlencode
+from http.client import HTTPConnection
+from urllib.parse import urlencode
 
 try:
     from wfrender.datasource.accumulator import AccumulatorDatasource
-except ImportError, e:
+except ImportError as e:
     from datasource.accumulator import AccumulatorDatasource
 from wfcommon.units import HPaToInHg
 from wfcommon.units import CToF
@@ -109,7 +109,7 @@ class MetOfficeWowPublisher(object):
                     self.logger.info("Publishing Metoffice WOW data: %s " % urlencode(args))
                     self._publish(args, 'wow.metoffice.gov.uk', '/automaticreading')
 
-                except Exception, e:
+                except Exception as e:
                     if (str(e) == "'NoneType' object has no attribute 'strftime'") or (str(e) == "a float is required"):
                         self.logger.error('Could not publish: no valid values at this time. Retry next run...')
                     else:
@@ -117,7 +117,7 @@ class MetOfficeWowPublisher(object):
  
                 time.sleep(self.period)
 
-        except Exception, e:
+        except Exception as e:
             self.logger.exception(e)
             raise
 
@@ -131,7 +131,7 @@ class MetOfficeWowPublisher(object):
 
         conn = HTTPConnection(server)
         if not conn:
-            raise Exception, 'Remote server connection (%s) timeout!' % server
+            raise Exception('Remote server connection (%s) timeout!' % server)
 
         self.logger.debug('GET %s' % uri)
 
@@ -145,6 +145,6 @@ class MetOfficeWowPublisher(object):
         self.logger.debug('Response: %d, %s, %s' % data)
 
         if not (data[0] == 200 and data[1] == 'OK'):
-            raise Exception, 'Server returned invalid status: %d %s %s' % data
+            raise Exception('Server returned invalid status: %d %s %s' % data)
         return data
 

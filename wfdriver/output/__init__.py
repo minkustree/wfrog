@@ -18,8 +18,8 @@
 
 import yaml
 
-import stdio
-import http
+from . import stdio
+from . import http
 
 # YAML Mappings
 

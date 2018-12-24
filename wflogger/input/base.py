@@ -17,7 +17,7 @@
 ##  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 class XmlInput(object):
     '''
@@ -55,10 +55,10 @@ class XmlInput(object):
         if self.validate:
             from lxml import etree
             if self.schema is None:                
-                self.schema = etree.XMLSchema(file=urllib.urlopen(self.location))
+                self.schema = etree.XMLSchema(file=urllib.request.urlopen(self.location))
             parsed_message = etree.fromstring(message)            
             
-            if not parsed_message.nsmap.has_key(None): #if no default namespace specified, set it
+            if None not in parsed_message.nsmap: #if no default namespace specified, set it
                 new_element = etree.Element(parsed_message.tag, attrib=parsed_message.attrib, nsmap={ None: self.namespace })
                 new_element.extend(parsed_message.getchildren())
                 parsed_message = etree.fromstring(etree.tostring(new_element))

@@ -18,7 +18,7 @@
 
 import yaml
 import logging
-import wrapper
+from . import wrapper
 import copy
 from os import path
 
@@ -59,15 +59,15 @@ class IncludeElement(wrapper.ElementWrapper):
             if context:
                 self.variables['settings']=context
 
-            conf_str = str(Template(file=file(self.abs_path, "r"), searchList=[self.variables]))
+            conf_str = str(Template(file=open(self.abs_path, "r"), searchList=[self.variables]))
             config = yaml.load(conf_str)
-            self.target = config.values()[0]
+            self.target = list(config.values())[0]
 
             return self.target
 
     def _call(self, attr, *args, **keywords):
 
-        if keywords.has_key('context'):
+        if 'context' in keywords:
             self._init(keywords['context'])
             context = copy.copy(keywords['context'])
             context['_yaml_config_file'] = self.abs_path

@@ -46,7 +46,7 @@ class FlushCollector(object):
     collector = None
 
     last_flush_time = None
-    max_event_time = datetime.datetime(2001, 01, 01)
+    max_event_time = datetime.datetime(2001, 0o1, 0o1)
 
     logger = logging.getLogger('collector.flush')
 

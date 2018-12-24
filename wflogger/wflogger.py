@@ -23,8 +23,8 @@ import os.path
 import sys
 if __name__ == "__main__": sys.path.append(os.path.abspath(sys.path[0] + '/..'))
 
-import input
-import collector
+from . import input
+from . import collector
 import wfcommon.generic
 import wfcommon.storage
 import optparse
@@ -32,7 +32,7 @@ import logging
 import time
 import wfcommon.config
 from threading import Thread
-from Queue import Queue, Full
+from queue import Queue, Full
 import copy
 
 def gen(type):
@@ -100,11 +100,11 @@ logging [logging configuration] (optional):
         self.input = config['input']
         self.collector = config['collector']
 
-        if config.has_key('queue_size'):
+        if 'queue_size' in config:
             self.queue_size = config['queue_size']
-        if config.has_key('period'):
+        if 'period' in config:
             self.period = config['period']
-        if config.has_key('embed'):
+        if 'embed' in config:
             self.embedded = config['embed']
 
         self.event_queue = Queue(self.queue_size)
@@ -144,7 +144,7 @@ logging [logging configuration] (optional):
         dir_name = os.path.dirname(self.config_file)
 
         # Start the embedded processes
-        if self.embedded.has_key('wfdriver'):
+        if 'wfdriver' in self.embedded:
             self.logger.debug("Starting embedded wfdriver")
             import wfdriver.wfdriver
             driver = wfdriver.wfdriver.Driver(self.opt_parser)
@@ -154,7 +154,7 @@ logging [logging configuration] (optional):
                 'embedded':True})
             driver_thread.setDaemon(True)
             driver_thread.start()
-        if self.embedded.has_key('wfrender'):
+        if 'wfrender' in self.embedded:
             self.logger.debug("Starting embedded wfrender")
             import wfrender.wfrender
             renderer = wfrender.wfrender.RenderEngine(self.opt_parser)

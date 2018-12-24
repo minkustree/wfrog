@@ -34,9 +34,9 @@ class SetupClient(object):
     def setup_settings(self, settings_def_file, source_file, target_file):
         self.logger.debug('Current settings file: '+str(source_file))
         self.logger.debug('New settings file:'+target_file)
-        defs = yaml.load( file(settings_def_file, 'r') )
+        defs = yaml.load( open(settings_def_file, 'r') )
         if source_file is not None:
-            source = yaml.load( file(source_file, 'r') )
+            source = yaml.load( open(source_file, 'r') )
         else:
             source = {}
         target = {}
@@ -68,7 +68,7 @@ class SetupClient(object):
             
         self.welcome(target_file)
         self.recurse_create(defs, source, target)
-        yaml.dump(target, file(target_file, 'w'), default_flow_style=False)
+        yaml.dump(target, open(target_file, 'w'), default_flow_style=False)
         self.bye()
         return target_file
 
@@ -77,16 +77,16 @@ class SetupClient(object):
             k=v['name']
             if v['type'] == 'dict':
                 target_node[k] = {}
-                if source_node.has_key(k):
+                if k in source_node:
                     new_source_node = source_node[k]
                 else:
                     new_source_node = {}
                 self.recurse_create(v['children'], new_source_node, target_node[k])
             else:
-                if source_node.has_key(k):
+                if k in source_node:
                     default = source_node[k]
                 else:
-                    if v.has_key('default') and v['default'] == 'none':
+                    if 'default' in v and v['default'] == 'none':
                         default = 'none'
                     else:
                         default = None
@@ -136,7 +136,7 @@ class SetupClient(object):
                     return None
 
     def ask_question(self, question, default, prompt):
-        print '\n'+question
+        print('\n'+question)
         if prompt is not None:
             sys.stdout.write('['+str(prompt)+'] ')    
         sys.stdout.write('> ')
@@ -147,8 +147,8 @@ class SetupClient(object):
             return line.strip()
 
     def welcome(self, settings_file):
-        print 'This is the setup of wfrog '+wfcommon.config.wfrog_version+' user settings that will be written in '+settings_file
+        print('This is the setup of wfrog '+wfcommon.config.wfrog_version+' user settings that will be written in '+settings_file)
 
     def bye(self):
-        print
-        print 'Thanks.'
+        print()
+        print('Thanks.')

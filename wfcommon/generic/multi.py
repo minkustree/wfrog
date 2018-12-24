@@ -17,7 +17,7 @@
 ##  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-import wrapper
+from . import wrapper
 import time
 from threading import Thread
 
@@ -50,7 +50,7 @@ class MultiElement(wrapper.ElementWrapper):
 
     def _call(self, attr, *args, **keywords):
         result = {}
-        for name, r in self.children.iteritems():
+        for name, r in self.children.items():
 
             self.logger.debug("Calling "+attr+" on child "+name)
 
@@ -79,7 +79,7 @@ class MultiElement(wrapper.ElementWrapper):
             return result
 
     def close(self):
-        for name, r in self.children.iteritems():
+        for name, r in self.children.items():
             try:
                 r.close()
             except:

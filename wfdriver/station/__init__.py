@@ -18,55 +18,55 @@
 
 import yaml
 
-import simulator
-import wmrs200
-import wmr928nx
-import wmr200
-import vantagepro
-import vantagepro2
-import wh1080
-import wh3080
-import ws23xx
-import ws28xx
-import auto
+from . import simulator
+from . import wmrs200
+from . import wmr928nx
+from . import wmr200
+from . import vantagepro
+from . import vantagepro2
+from . import wh1080
+from . import wh3080
+from . import ws23xx
+from . import ws28xx
+from . import auto
 
 # YAML mappings and registration for auto-detect
 
 class YamlAutoDetectStation(auto.AutoDetectStation, yaml.YAMLObject):
-    yaml_tag = u'!auto'
+    yaml_tag = '!auto'
 
 class YamlWMR200Station(wmr200.WMR200Station, yaml.YAMLObject):
-    yaml_tag = u'!wmr200'
+    yaml_tag = '!wmr200'
 auto.stations.append(wmr200)
 
 class YamlWMRS200Station(wmrs200.WMRS200Station, yaml.YAMLObject):
-    yaml_tag = u'!wmrs200'
+    yaml_tag = '!wmrs200'
 auto.stations.append(wmrs200)
 
 class YamlWMR928NXStation(wmr928nx.WMR928NXStation, yaml.YAMLObject):
-    yaml_tag = u'!wmr928nx'
+    yaml_tag = '!wmr928nx'
 auto.stations.append(wmr928nx)
 
 class YamlVantageProStation(vantagepro.VantageProStation, yaml.YAMLObject):
-    yaml_tag = u'!vantagepro'
+    yaml_tag = '!vantagepro'
 
 class YamlVantageProStation(vantagepro2.VantageProStation, yaml.YAMLObject):
-    yaml_tag = u'!vantagepro2'
+    yaml_tag = '!vantagepro2'
 
 class YamlWH1080Station(wh1080.WH1080Station, yaml.YAMLObject):
-    yaml_tag = u'!wh1080'
+    yaml_tag = '!wh1080'
     
 class YamlWH3080Station(wh3080.WH3080Station, yaml.YAMLObject):
-    yaml_tag = u'!wh3080'
+    yaml_tag = '!wh3080'
 
 class YamlWS2300Station(ws23xx.WS2300Station, yaml.YAMLObject):
-    yaml_tag = u'!ws2300'    
+    yaml_tag = '!ws2300'    
 
 class YamlWS28xxStation(ws28xx.WS28xxStation, yaml.YAMLObject):
-    yaml_tag = u'!ws28xx'
+    yaml_tag = '!ws28xx'
 auto.stations.append(ws28xx)
 
 class YamlRandomSimulator(simulator.RandomSimulator, yaml.YAMLObject):
-    yaml_tag = u'!random-simulator'
+    yaml_tag = '!random-simulator'
 auto.stations.append(simulator)
 

@@ -25,7 +25,7 @@ from wfcommon.formula.base import LastFormula
 from wfcommon.formula.base import SumFormula
 try:
     from wfrender.datasource.accumulator import AccumulatorDatasource
-except ImportError, e:
+except ImportError as e:
     from datasource.accumulator import AccumulatorDatasource
 from wfcommon.units import HPaToInHg
 from wfcommon.units import CToF
@@ -132,13 +132,13 @@ class WeatherUndergroundPublisher(object):
 
                         # Do not send parameters that are null (None), but don't remove zeroes (0.0)
                         # from above only dateutc is a mandatory parameter.
-                        params = dict(filter(lambda (p,v): v is not None, [(p,v) for p,v in params.iteritems()]))
+                        params = dict([p_v for p_v in [(p,v) for p,v in params.items()] if p_v[1] is not None])
                         self.logger.info("Publishing Wunderground data (normal server): %s " % str(params))
                         self.publisher.set(**params)
                         response = self.publisher.publish()               
                         self.logger.info('Result Wunderground publisher: %s' % str(response))
 
-                    except Exception, e:
+                    except Exception as e:
                         self.logger.exception(e)
 
                     time.sleep(self.period)
@@ -149,7 +149,7 @@ class WeatherUndergroundPublisher(object):
 #    
 #                    time.sleep(self.period)
 
-        except Exception, e:
+        except Exception as e:
             self.logger.exception(e)
             raise
 

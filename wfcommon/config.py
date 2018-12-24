@@ -17,7 +17,7 @@
 ##  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-import log
+from . import log
 import yaml
 import inspect
 import sys
@@ -58,21 +58,21 @@ class Configurer(object):
                 self.extensions[ext]=__import__(ext)
         if options.help_list:
             if component.__doc__ is not None:
-                print component.__doc__
+                print(component.__doc__)
             for (k,v) in self.module_map:
-                print k
-                print "-"*len(k) +"\n"
+                print(k)
+                print("-"*len(k) +"\n")
                 self.print_help(v)
             if options.extension_names:
-                print "Extensions"
-                print "----------\n"
+                print("Extensions")
+                print("----------\n")
                 for ext in self.extensions:
-                    print "[" + ext + "]"
-                    print
+                    print("[" + ext + "]")
+                    print()
                     self.print_help(self.extensions[ext])
             # Adds logger documentation
-            print self.log_configurer.__doc__
-            print " Use option -H ELEMENT for help on a particular !element"
+            print(self.log_configurer.__doc__)
+            print(" Use option -H ELEMENT for help on a particular !element")
             sys.exit()
         if options.help_element:
             element = options.help_element
@@ -84,13 +84,13 @@ class Configurer(object):
             if len(desc) == 0:
                 for ext in self.extensions:
                     desc.update(self.get_help_desc(self.extensions[ext]))
-            if desc.has_key(element):
-                print
-                print element + " [" + desc[element][1] +"]"
-                print "    " + desc[element][0]
-                print
+            if element in desc:
+                print()
+                print(element + " [" + desc[element][1] +"]")
+                print("    " + desc[element][0])
+                print()
             else:
-                print "Element "+element+" not found or not documented"
+                print("Element "+element+" not found or not documented")
             sys.exit()
 
         if not embedded and options.config:
@@ -103,11 +103,11 @@ class Configurer(object):
             else:
                 settings_warning=True
                 self.settings_file = os.path.dirname(self.config_file)+'/../../wfcommon/config/default-settings.yaml'
-        settings = yaml.load( file(self.settings_file, 'r') )
+        settings = yaml.load( open(self.settings_file, 'r') )
 
         variables = {}
         variables['settings']=settings
-        config = yaml.load( str(Template(file=file(self.config_file, "r"), searchList=[variables])))
+        config = yaml.load( str(Template(file=open(self.config_file, "r"), searchList=[variables])))
 
         if settings is not None:
             context = copy.deepcopy(settings)
@@ -127,8 +127,8 @@ class Configurer(object):
         self.logger.debug('Loaded settings %s', repr(settings))
         self.logger.debug("Loaded config file " + os.path.normpath(self.config_file))
         
-        if config.has_key('init'):
-            for k,v in config['init'].iteritems():
+        if 'init' in config:
+            for k,v in config['init'].items():
                 self.logger.debug("Initializing "+k)
                 try:
                     v.init(context=context)
@@ -139,12 +139,12 @@ class Configurer(object):
 
     def print_help(self, module):
         desc = self.get_help_desc(module, summary=True)
-        sorted = desc.keys()
+        sorted = list(desc.keys())
         sorted.sort()
         for k in sorted:
-            print k
-            print "    " + desc[k][0]
-            print
+            print(k)
+            print("    " + desc[k][0])
+            print()
 
     def get_help_desc(self, module, summary=False):
         self.logger.debug("Getting info on module '"+module.__name__+"'")

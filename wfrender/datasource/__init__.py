@@ -18,21 +18,21 @@
 
 import yaml
 
-import accumulator
-import database
-import xmlquery
-import simulator
+from . import accumulator
+from . import database
+from . import xmlquery
+from . import simulator
 
 # YAML mappings
 
 class YamlAccumulatorDataSource(accumulator.AccumulatorDatasource, yaml.YAMLObject):
-    yaml_tag = u'!accumulator'
+    yaml_tag = '!accumulator'
 
 class YamlSimulatorDataSource(simulator.SimulatorDataSource, yaml.YAMLObject):
-    yaml_tag = u'!simulator'
+    yaml_tag = '!simulator'
 
 class YamlDatabaseDataSource(database.DatabaseDataSource, yaml.YAMLObject):
-    yaml_tag = u'!database'
+    yaml_tag = '!database'
 
 class YamlCurrentConditionsXmlDataSource(xmlquery.CurrentConditionsXmlDataSource, yaml.YAMLObject):
-    yaml_tag = u'!currentxml'
+    yaml_tag = '!currentxml'

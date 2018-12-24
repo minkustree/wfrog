@@ -17,7 +17,7 @@
 ##  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-import wrapper
+from . import wrapper
 
 # The global service registry
 services = {}

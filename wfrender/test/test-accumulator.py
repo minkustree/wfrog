@@ -19,8 +19,8 @@ a.span = 4
 a.storage = wfcommon.storage.simulator.SimulatorStorage()
 a.storage.seed = 4
 
-print repr(a.execute( data={ 'time_end': '2010-03-25Z12:00:00' }))
+print(repr(a.execute( data={ 'time_end': '2010-03-25Z12:00:00' })))
 
-print repr(a.execute( data={ 'time_end': '2010-03-26Z12:00:00' }))
+print(repr(a.execute( data={ 'time_end': '2010-03-26Z12:00:00' })))
 
-print repr(a.execute( data={ 'time_end': '2010-03-26Z12:00:00' }))
+print(repr(a.execute( data={ 'time_end': '2010-03-26Z12:00:00' })))

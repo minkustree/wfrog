@@ -28,7 +28,7 @@ from wfcommon.formula.base import MinFormula
 from wfcommon.formula.base import MaxFormula
 try:
     from wfrender.datasource.accumulator import AccumulatorDatasource
-except ImportError, e:
+except ImportError as e:
     from datasource.accumulator import AccumulatorDatasource
 from wfcommon.units import MpsToKmh
 
@@ -193,7 +193,7 @@ class StickerRenderer(object):
 
             return ['image/png', d]
 
-        except Exception, e:
+        except Exception as e:
             self.logger.warning("Error rendering sticker: %s" % str(e))
             return None
 

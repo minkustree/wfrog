@@ -18,25 +18,25 @@
 
 import yaml
 
-import include
-import multi
-import service
-import stopwatch
-import user
+from . import include
+from . import multi
+from . import service
+from . import stopwatch
+from . import user
 
 # YAML mappings
 
 class YamlIncludeElement(include.IncludeElement, yaml.YAMLObject):
-    yaml_tag = u'!include'
+    yaml_tag = '!include'
 
 class YamlMultiElement(multi.MultiElement, yaml.YAMLObject):
-    yaml_tag = u'!multi'
+    yaml_tag = '!multi'
 
 class YamlServiceElement(service.ServiceElement, yaml.YAMLObject):
-    yaml_tag = u'!service'
+    yaml_tag = '!service'
 
 class YamlUserChoiceElement(user.UserChoiceElement, yaml.YAMLObject):
-    yaml_tag = u'!user'
+    yaml_tag = '!user'
 
 class YamlStopWatchElement(stopwatch.StopWatchElement, yaml.YAMLObject):
-    yaml_tag = u'!stopwatch'
+    yaml_tag = '!stopwatch'

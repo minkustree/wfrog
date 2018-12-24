@@ -30,7 +30,7 @@ def format(obj, time_format):
         return str(obj)
     elif isinstance(obj, struct_time):
         return strftime(time_format, obj)
-    elif isinstance(obj, (str, unicode)):
+    elif isinstance(obj, str):
         return obj.strip()
     elif isinstance(obj, datetime):
         return obj.strftime(time_format)
@@ -50,7 +50,7 @@ def write2xml(dictionary, root_tag, filename, time_format='%Y-%m-%d %H:%M:%S'):
     root = ElementTree.Element(root_tag)
     doc = ElementTree.ElementTree(root)
     if dictionary != None:
-        ks = dictionary.keys()
+        ks = list(dictionary.keys())
         ks.sort()
         for k in ks:
             ele = root

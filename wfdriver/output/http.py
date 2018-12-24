@@ -16,8 +16,8 @@
 ##  You should have received a copy of the GNU General Public License
 ##  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import httplib
-import urlparse
+import http.client
+import urllib.parse
 import logging
 
 class HttpOutput(object):
@@ -36,8 +36,8 @@ class HttpOutput(object):
 
     def send_event(self, event):
         if self.connection == None:
-            parts = urlparse.urlsplit(self.url)
-            self.connection = httplib.HTTPConnection(parts.netloc)
+            parts = urllib.parse.urlsplit(self.url)
+            self.connection = http.client.HTTPConnection(parts.netloc)
             self.path = parts.path
             if parts.query:
                 self.path = self.path + '?' + parts.query
@@ -46,7 +46,7 @@ class HttpOutput(object):
             self.connection.request('POST', self.url, str(event))
             response = self.connection.getresponse()
             response.read()
-        except Exception, e:
+        except Exception as e:
             self.connection = None
             self.logger.critical(self.url+": "+str(e))
             return

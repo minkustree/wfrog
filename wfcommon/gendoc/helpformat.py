@@ -1,5 +1,5 @@
 import optparse
-import sys, StringIO
+import sys, io
 import re
 
 TITLE1=1
@@ -89,7 +89,7 @@ def format(line, context={}):
 def to_content(buffer, line, context):
     mark = parse_mark(line)
     if mark == TITLE2:
-        if False and context.has_key('start_title2'): #disabled
+        if False and 'start_title2' in context: #disabled
             prefix = '<hr>'
         else:
             prefix=''
@@ -132,7 +132,7 @@ def to_content(buffer, line, context):
 
 def treat_line(buffer, line, output, context):
     if buffer == None:
-        buffer = StringIO.StringIO()
+        buffer = io.StringIO()
 
     ( buffer, prefix, suffix, end ) = to_content(buffer, line, context)
 

@@ -56,7 +56,7 @@ class AutoDetectStation(object):
                         self.logger.info("Detected station "+name)
                         detected_station = detected_result
                         break
-                except Exception, e:
+                except Exception as e:
                     self.logger.warn("Could not probe station "+name+": %s", e)
         if detected_station is None:
             self.logger.error("Could not detect any station connected to this computer")

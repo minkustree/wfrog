@@ -93,7 +93,7 @@ class VantageProStation(object):
                 self._wakeup()
                 self._cmd( 'LOOP', self.loops)       
 
-                for x in xrange(self.loops):
+                for x in range(self.loops):
                     raw = self._port.read( _LoopStruct.size ) # read data
                     self.logger.debug('read: ' + raw.encode('hex'))
 
@@ -164,7 +164,7 @@ class VantageProStation(object):
                         log_txt +=  "Wind:%.3fm/s %d " % (fields['WindSpeed'], fields['WindDir'])
 
                         # Extra Temp & Hum sensors
-                        for i in xrange(7):
+                        for i in range(7):
                             extra_temp = 'ExtraTemp%d' % (i+1) 
                             extra_hum = 'ExtraHum%d' % (i+1)
                             if not fields[extra_temp] is None:
@@ -205,7 +205,7 @@ class VantageProStation(object):
 
                 time.sleep(2)
 
-            except Exception, e:
+            except Exception as e:
                 self.logger.error(e)
                 time.sleep(self.loops * 2)
             finally:
@@ -218,7 +218,7 @@ class VantageProStation(object):
         issue wakeup command to device to take out of standby mode.
         '''
         self.logger.debug("send: WAKEUP")
-        for i in xrange(3):
+        for i in range(3):
             self._port.write('\n')                    # wakeup device
             ack = self._port.read(len(self.WAKE_ACK)) # read wakeup string
             self.logger.debug('read: ' + ack.encode('hex'))
@@ -237,7 +237,7 @@ class VantageProStation(object):
         if args:
             cmd = "%s %s" % (cmd, ' '.join(str(a) for a in args))
         self.logger.debug('send: ' + cmd)
-        for i in xrange(3):
+        for i in range(3):
             self._port.write( cmd + '\n')
             if ok:
                 ack = self._port.read(len(self.OK))  # read OK
@@ -337,7 +337,7 @@ class myStruct( struct.Struct ):
         See `struct.Struct` class defintion.
     '''
     def __init__(self, fmt, order='@'):
-        self.fields, fmt_t = zip(*fmt)
+        self.fields, fmt_t = list(zip(*fmt))
         fmt_s = order + ''.join(fmt_t)
         super(myStruct,self).__init__( fmt_s )
 
@@ -354,7 +354,7 @@ class myStruct( struct.Struct ):
         fields can be post-processed by extending the _post_unpack() method.
         '''
         data = super(myStruct,self).unpack_from( buf, offset)
-        items = dict(zip(self.fields,data))
+        items = dict(list(zip(self.fields,data)))
         return self._post_unpack(items)
 
 

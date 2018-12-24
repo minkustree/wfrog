@@ -127,17 +127,17 @@ class AccumulatorDatasource(object):
             self.to_time = to_time
 
             # replace string keys with index for performance
-            for serie in self.formulas.values():
-                for formula in serie.values():
+            for serie in list(self.formulas.values()):
+                for formula in list(serie.values()):
                     if type(formula.index)==str:
                         formula.index = keys.index(formula.index)
                     # Index can be a list of indexes (e.g. heatIndex or WindChill)
                     elif type(formula.index)==list:
-                        formula.index = map(lambda x: keys.index(x), formula.index)
+                        formula.index = [keys.index(x) for x in formula.index]
 
         def add_sample(self, sample):
-            for serie in self.formulas.values():
-                for formula in serie.values():
+            for serie in list(self.formulas.values()):
+                for formula in list(serie.values()):
                     formula.append(sample)
 
     def get_slice_duration(self):
@@ -239,10 +239,10 @@ class AccumulatorDatasource(object):
 
         result = {}
 
-        for k,v in self.formulas.iteritems():
+        for k,v in self.formulas.items():
             result[k]={}
             result[k]['series']={}
-            for key in v.keys():
+            for key in list(v.keys()):
                 subkeys = key.split(',')
                 for subkey in subkeys:
                     result[k]['series'][subkey]=[]
@@ -253,8 +253,8 @@ class AccumulatorDatasource(object):
                     result[k]['series'][literal]=labels
 
         for slice in slices:
-            for k,v in slice.formulas.iteritems():
-                for key,formula in v.iteritems():
+            for k,v in slice.formulas.items():
+                for key,formula in v.items():
                     value = formula.value()
                     subkeys = key.split(',')
                     if len(subkeys) == 1:
@@ -265,7 +265,7 @@ class AccumulatorDatasource(object):
         return result
 
     def execute(self,data={}, context={}):
-        if data.has_key('time_end'):
+        if 'time_end' in data:
             to_time = parse(data['time_end'])
             use_cache = False
         else:

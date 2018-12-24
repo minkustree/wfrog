@@ -20,13 +20,13 @@ import string,cgi,time
 import threading
 import socket
 import select
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-from SimpleHTTPServer import SimpleHTTPRequestHandler
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import SimpleHTTPRequestHandler
 import copy
-import urlparse, cgi, Cookie
+import urllib.parse, cgi, http.cookies
 import logging
 import posixpath
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import os
 
 class HttpRenderer(object):
@@ -93,7 +93,7 @@ class HttpRenderer(object):
             self.logger.info('^C received, shutting down server')
             self.server.shutdown()
             raise KeyboardInterrupt()
-        except Exception, e:
+        except Exception as e:
             self.logger.exception(e)
             raise
 
@@ -113,16 +113,16 @@ class HttpRendererHandler(BaseHTTPRequestHandler):
         data = copy.deepcopy(_HttpRendererSingleton.data)
 
         try:
-            params = cgi.parse_qsl(urlparse.urlsplit(self.path).query)
+            params = cgi.parse_qsl(urllib.parse.urlsplit(self.path).query)
             for p in params:
                 data[p[0]] = p[1]
 
             content = None
 
-            name = urlparse.urlsplit(self.path).path.strip('/')
+            name = urllib.parse.urlsplit(self.path).path.strip('/')
 
             if name == "-set-":
-                if data.has_key("s") and data.has_key("k") and data.has_key("v"):
+                if "s" in data and "k" in data and "v" in data:
                     section = data["s"]
                     key = data["k"]
                     value = data["v"]
@@ -130,12 +130,12 @@ class HttpRendererHandler(BaseHTTPRequestHandler):
                         self.send_error(403,"Permission Denied")
                         return
                     context[section][key]=value
-                    cookie = Cookie.SimpleCookie()
+                    cookie = http.cookies.SimpleCookie()
 
                     cookie[section+"."+key]=value
 
                     self.send_response(302)
-                    self.send_header('Location', self.headers["Referer"] if self.headers.has_key("Referer") else "/")
+                    self.send_header('Location', self.headers["Referer"] if "Referer" in self.headers else "/")
                     self.wfile.write(cookie.output()+'\r\n')
                     self.end_headers()
 
@@ -147,20 +147,20 @@ class HttpRendererHandler(BaseHTTPRequestHandler):
             cookie_str = self.headers.get('Cookie')
             if cookie_str:
                 try:
-                    cookie = Cookie.SimpleCookie(cookie_str)
+                    cookie = http.cookies.SimpleCookie(cookie_str)
                 except Exception:
-                    cookie = Cookie.SimpleCookie(cookie_str.replace(':', ''))
+                    cookie = http.cookies.SimpleCookie(cookie_str.replace(':', ''))
 
                 for i in cookie:
                     parts = i.split('.')
                     if len(parts) == 2:
                         section = parts[0]
                         key = parts[1]
-                        if cookie_sections.__contains__(section) and context[section].has_key(key):
+                        if cookie_sections.__contains__(section) and key in context[section]:
                             context[section][key]=cookie[i].value
 
             if _HttpRendererSingleton.static and self.path == "/"+_HttpRendererSingleton.static:
-                self.send_response(301);
+                self.send_response(301)
                 self.send_header("Location", self.path + "/")
                 self.end_headers()
                 return
@@ -181,15 +181,15 @@ class HttpRendererHandler(BaseHTTPRequestHandler):
                 if not root:
                     mime = "text/html"
                     content = "<html><head><title>wfrender</title><body>"
-                    for renderer in renderers.keys():
+                    for renderer in list(renderers.keys()):
                         content += "<a href='"+renderer+"'>"+renderer+"</a><br>"
                     content += "</body></html>"
                 else:
                     [ mime, content ] = root.render(data=data, context=context)
             else:
-                if renderers is not None and renderers.has_key(name):
+                if renderers is not None and name in renderers:
                     [ mime, content ] = renderers[name].render(data=data, context=context)
-        except Exception, e:
+        except Exception as e:
             _HttpRendererSingleton.logger.exception(e)
             self.send_error(500, "Internal Server Error")
             return 
@@ -198,7 +198,7 @@ class HttpRendererHandler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-type', mime)
             self.end_headers()
-            self.wfile.write(content)
+            self.wfile.write(content.encode("utf-8"))
         else:
             self.send_error(404,"File Not Found: '%s'" % self.path)
     
@@ -272,12 +272,12 @@ class StaticFileRequestHandler(SimpleHTTPRequestHandler):
         probably be diagnosed.)
 
         """
-        print "IN: "+path
+        print("IN: "+path)
         path = path.split('?',1)[0]
         path = path.split('#',1)[0]
-        path = posixpath.normpath(urllib.unquote(path))
+        path = posixpath.normpath(urllib.parse.unquote(path))
         words = path.split('/')
-        words = filter(None, words)
+        words = [_f for _f in words if _f]
         path = _HttpRendererSingleton.docroot
         for word in words:
             drive, word = os.path.splitdrive(word)

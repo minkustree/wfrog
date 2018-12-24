@@ -21,24 +21,24 @@ import decimal
 
 try:
     import kinterbasdb
-    if __name__ == '__main__': print "firebird driver present"
+    if __name__ == '__main__': print("firebird driver present")
 except ImportError:
     kinterbasdb = None
 
 if kinterbasdb:
     try:
         kinterbasdb.init(type_conv=199) # Set type conversion (datetime / floats)
-        if __name__ == '__main__': print "firebird conversion 199"
+        if __name__ == '__main__': print("firebird conversion 199")
         #kinterbasdb.init(type_conv=200) # Set type conversion (datetime / decimal)
     except:
         try:
             kinterbasdb.init(type_conv=0) # Set type conversion (time tuple / floats) old python 2.5
-            if __name__ == '__main__': print "firebird conversion 0"
+            if __name__ == '__main__': print("firebird conversion 0")
         except:
             pass
 try:
     import MySQLdb
-    if __name__ == '__main__': print "mysql driver present"
+    if __name__ == '__main__': print("mysql driver present")
 except ImportError:
     MySQLdb = None
 
@@ -143,7 +143,7 @@ class MySQLDB(DB):
 
 try:
     import sqlite3
-    if __name__ == '__main__': print "sqlite driver present"
+    if __name__ == '__main__': print("sqlite driver present")
 except ImportError:
     sqlite3 = None
 
@@ -182,14 +182,14 @@ def DBFactory(configuration):
         'password' : 'root'}
     """
 
-    if 'type' not in configuration: raise(Exception('DBFactory: database type not specified'))
+    if 'type' not in configuration: raise Exception
     type = configuration['type'].lower()
 
     if type == 'firebird':
         if not kinterbasdb:
-            raise(Exception("DBFactory: kinterbasdb (Firebirds python's database driver) is not installed"))
+            raise Exception
         if 'database' not in configuration:
-            raise(Exception('DBFactory: Firebird database connection string not specified'))
+            raise Exception
         database = configuration['database']
         if 'user' not in configuration:
             user = 'SYSDBA'
@@ -208,12 +208,12 @@ def DBFactory(configuration):
 
     elif type == 'mysql':
         if not MySQLdb:
-            raise(Exception("DBFactory: MySQLdb (mysql python's database driver) is not installed"))
+            raise Exception
         if 'database' not in configuration:
-            raise(Exception('DBFactory: MySql database name not specified'))
+            raise Exception
         database = configuration['database']
         if 'host' not in configuration:
-            raise(Exception('DBFactory: MySql database name not specified'))
+            raise Exception
         host = configuration['host']
         if 'port' not in configuration:
             port = 3306
@@ -231,7 +231,7 @@ def DBFactory(configuration):
         return  MySQLDB(database, host, port, user, password)
 
     else:
-        raise(Exception('database type %s not supported' % configuration))
+        raise Exception
 
 
 if __name__ == '__main__':
@@ -243,10 +243,10 @@ if __name__ == '__main__':
                          'password' : 'masterkey'}
         db = DBFactory(firebird_test)
         db.connect()
-        print db.select("SELECT COUNT(*) FROM METEO")
+        print(db.select("SELECT COUNT(*) FROM METEO"))
         db.disconnect()
     else:
-        print "kinterbasdb (Firebird python's driver) is not installed"
+        print("kinterbasdb (Firebird python's driver) is not installed")
 
     if MySQLdb:
         mysql_test = {'type' : 'mysql',
@@ -257,8 +257,8 @@ if __name__ == '__main__':
                       'password' : 'root'}
         db = DBFactory(mysql_test)
         db.connect()
-        print db.select("SELECT COUNT(*) FROM METEO")
+        print(db.select("SELECT COUNT(*) FROM METEO"))
         db.disconnect()
     else:
-        print "MySQLdb (mysql python's driver) is not installed"
+        print("MySQLdb (mysql python's driver) is not installed")
 

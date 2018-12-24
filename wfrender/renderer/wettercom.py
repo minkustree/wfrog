@@ -22,12 +22,12 @@ import time
 import hashlib
 import json
 from wfcommon.formula.base import LastFormula
-from httplib import HTTPConnection
-from urllib import urlencode
+from http.client import HTTPConnection
+from urllib.parse import urlencode
 
 try:
     from wfrender.datasource.accumulator import AccumulatorDatasource
-except ImportError, e:
+except ImportError as e:
     from datasource.accumulator import AccumulatorDatasource
 
 class WetterComPublisher(object):
@@ -129,18 +129,18 @@ class WetterComPublisher(object):
                         else:
                             self.logger.error('Data publishing fails! Code: %s | Description: %s' % response["errorcode"], response["errormessage"])
 
-                    except Exception, e:
+                    except Exception as e:
                         if (str(e) == "'NoneType' object has no attribute 'strftime'") or (str(e) == "a float is required"):
                             self.logger.error('Could not publish: no valid values at this time. Retry next run...')
                         else:
                             self.logger.error('Got unexpected error. Retry next run. Error: %s' % e)
                             raise
-                except Exception, e:
+                except Exception as e:
                     self.logger.exception(e)
 
                 time.sleep(self.period)
 
-        except Exception, e:
+        except Exception as e:
             self.logger.exception(e)
             raise
 
@@ -155,7 +155,7 @@ class WetterComPublisher(object):
 
       conn = HTTPConnection(server)
       if not conn:
-         raise Exception, 'Remote server connection timeout!'
+         raise Exception('Remote server connection timeout!')
      
       headers = {"Content-type": "application/x-www-form-urlencoded","Accept": "text/plain"}
 
@@ -167,5 +167,5 @@ class WetterComPublisher(object):
       data = (http.status, http.reason, http.read())
       conn.close()
       if not (data[0] == 200 and data[1] == 'OK'):
-         raise Exception, 'Server returned invalid status: %d %s %s' % data
+         raise Exception('Server returned invalid status: %d %s %s' % data)
       return data

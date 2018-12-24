@@ -17,7 +17,7 @@
 ##  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-import wrapper
+from . import wrapper
 import os
 import copy
 import getpass
@@ -43,7 +43,7 @@ class UserChoiceElement(wrapper.ElementWrapper):
 
         if not self.target:
             user = getpass.getuser()
-            if not self.choices.has_key(user):
+            if user not in self.choices:
                 user = 'default'
             self.logger.debug('Current user:'+user)
 
@@ -53,7 +53,7 @@ class UserChoiceElement(wrapper.ElementWrapper):
 
     def _call(self, attr, *args, **keywords):
 
-        if keywords.has_key('context'):
+        if 'context' in keywords:
             self._init(keywords['context'])
             context = copy.copy(keywords['context'])
             context['_yaml_config_file'] = self.abs_path

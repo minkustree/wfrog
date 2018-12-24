@@ -17,8 +17,8 @@
 ##  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import yaml
-import renderer
-import datasource
+from . import renderer
+from . import datasource
 import wfcommon.generic
 import wfcommon.config
 import wfcommon.storage
@@ -32,6 +32,7 @@ import inspect
 import logging
 import traceback
 import wfcommon.dict
+import importlib
 
 class RendererConfigurer(wfcommon.config.Configurer):
     """Returns a configuration read from a yaml file (default to wfrender.yaml in cwd)"""
@@ -78,7 +79,7 @@ class RendererConfigurer(wfcommon.config.Configurer):
             engine.daemon = True
             modules = []
             modules.extend(self.builtins)
-            modules.extend(self.extensions.keys())
+            modules.extend(list(self.extensions.keys()))
             FileWatcher(options, modules, self, engine, options, args).start()
 
 class FileWatcher(Thread):
@@ -119,7 +120,7 @@ class FileWatcher(Thread):
                 continue
 
             if self.options.reload_mod:
-                for m in modules_modified.keys():
+                for m in list(modules_modified.keys()):
                     last_modified = last_mod(m)
                     if last_modified > modules_modified[m]:
                         try:
@@ -156,9 +157,9 @@ def reload_modules(parent):
     parent = __import__(parent)
     for m in inspect.getmembers(parent, lambda l: inspect.ismodule(l)):
         logger.debug("Reloading module '"+m[0]+"'.")
-        reload(m[1])
+        importlib.reload(m[1])
     logger.debug("Reloading module '"+parent.__name__+"'.")
-    reload(parent)
+    importlib.reload(parent)
 
 
 def last_mod(parent):

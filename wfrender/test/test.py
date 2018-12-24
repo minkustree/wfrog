@@ -12,7 +12,7 @@ class Test1(object):
     pass
 
 def random_data(points=16, maximum=100):
-    return [random.random() * maximum for a in xrange(points)]
+    return [random.random() * maximum for a in range(points)]
 
 def _axis_set_style(self, colour, font_size=None, alignment=None, drawing_control=None, tick_colour=None):
     _check_colour(colour)
@@ -78,7 +78,7 @@ def simple_random():
     chart.set_line_style(1, 1)
     chart.set_line_style(2, 1+size/30)
     chart.set_line_style(3, 1+size/30)
-    print chart.get_url()
+    print(chart.get_url())
     chart.download('test.png')
 
 #simple_random()

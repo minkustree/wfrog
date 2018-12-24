@@ -17,7 +17,7 @@
 ##  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-import base
+from . import base
 import datetime
 import wfcommon.meteo
 
@@ -54,11 +54,11 @@ class AggregatorCollector(base.BaseCollector):
     def _new_period(self):
         ## Temperature (up to 10 sensors, sensor number 1 is the main sensor)
         self._temp = {}
-        for sensor in xrange(MAX_TH_SENSORS):
+        for sensor in range(MAX_TH_SENSORS):
             self._temp[sensor] = []
         ## Humidity  (up to 10 sensors, sensor number 1 is the main sensor)
         self._hum = {}
-        for sensor in xrange(MAX_TH_SENSORS):
+        for sensor in range(MAX_TH_SENSORS):
             self._hum[sensor] = []
         ## Wind
         self._wind = []
@@ -132,7 +132,7 @@ class AggregatorCollector(base.BaseCollector):
             'solar_rad' : None
         }
 
-        for sensor in xrange(MAX_TH_SENSORS):
+        for sensor in range(MAX_TH_SENSORS):
             if sensor == MAIN_TH_SENSOR:
                 tsn = 'temp'
                 hsn = 'hum'

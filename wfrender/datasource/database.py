@@ -16,7 +16,7 @@
 ##  You should have received a copy of the GNU General Public License
 ##  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from StringIO import StringIO
+from io import StringIO
 import sys
 import logging
 import datetime
@@ -97,7 +97,7 @@ class DatabaseDataSource(object):
     def execute(self,data={}, context={}):
 
         config = DatabaseConfig()
-        if context.has_key('database'):
+        if 'database' in context:
             config.__dict__.update(context['database'])
         config.__dict__.update(self.__dict__)
 
@@ -109,21 +109,21 @@ class DatabaseDataSource(object):
         switch = self.switch
         holes = self.holes
 
-        begin = parse(data['time_begin']) if data.has_key('time_begin') else None
-        end = parse(data['time_end']) if data.has_key('time_end') else None
-        span = data['time_span'] if data.has_key('time_span') else self.span
-        slice = data['time_slice'] if data.has_key('time_slice') else self.slice
+        begin = parse(data['time_begin']) if 'time_begin' in data else None
+        end = parse(data['time_end']) if 'time_end' in data else None
+        span = data['time_span'] if 'time_span' in data else self.span
+        slice = data['time_slice'] if 'time_slice' in data else self.slice
 
         YEAR=[
             "EXTRACT(YEAR FROM "+timestamp_field+")",
             '',
-            sys.maxint,
+            sys.maxsize,
             None, None, "%Y"]
 
         MONTH=[
             lpa+"EXTRACT(MONTH FROM "+timestamp_field+")"+lpz+conc+"'"+separator+"'"+conc+"EXTRACT(YEAR FROM "+timestamp_field+")",
             '',
-            sys.maxint,
+            sys.maxsize,
             None, self.BEFORE, "%m"+separator+"%Y"]
 
         DAY=[
@@ -156,14 +156,14 @@ class DatabaseDataSource(object):
             where_clause = " WHERE " + timestamp_field + ">='" + format(begin) + "'"
             if end:
                 where_clause = where_clause + " AND " + timestamp_field + "<='" + format(end) + "'"
-                span=sys.maxint # TODO: calculate exact span
+                span=sys.maxsize # TODO: calculate exact span
             else:
                 if span:
                     end=delta(begin, span, slice)
                     where_clause = where_clause + " AND " + timestamp_field + "<='" + format(end) + "'"
                 else:
                     end=datetime.datetime.now()
-                    span=sys.maxint # TODO: calculate exact span
+                    span=sys.maxsize # TODO: calculate exact span
         else:
             if end:
                 if span:
@@ -171,14 +171,14 @@ class DatabaseDataSource(object):
                     where_clause = " WHERE "+timestamp_field + ">='" + format(begin) + "' AND "
                     where_clause = where_clause + timestamp_field + "<='" + format(end) + "'"
                 else:
-                    span=sys.maxint # TODO: calculate exact span
+                    span=sys.maxsize # TODO: calculate exact span
             else:
                 end=datetime.datetime.now()
                 begin=delta(datetime.datetime.now(), -span, slice)
                 if span:
                     where_clause = " WHERE "+timestamp_field + ">='" + format(begin) + "'"
                 else:
-                    span=sys.maxint # TODO: calculate exact span
+                    span=sys.maxsize # TODO: calculate exact span
 
         (key, date_format) = self.get_key(slices[slice], span)
 
@@ -193,7 +193,7 @@ class DatabaseDataSource(object):
 
         row_length=1
         for measure in self.measures:
-            if self.measure_map.has_key(measure):
+            if measure in self.measure_map:
                 select.write(", ")
                 select.write(self.measure_map[measure][measure_index])
                 row_length = row_length + len(self.measure_map[measure][measure_index+1])
@@ -240,7 +240,7 @@ class DatabaseDataSource(object):
             d = begin
             while d <= end:
                 df = d.strftime(date_format)
-                if map.has_key(df):
+                if df in map:
                     result.append(map[df])
                 else:
                     r = tuple([df]+([None]*(row_length-1)))
@@ -253,7 +253,7 @@ class DatabaseDataSource(object):
         labels = []
 
         for measure in self.measures:
-            if self.measure_map.has_key(measure):
+            if measure in self.measure_map:
                 key = measure
                 result_data[key]={ 'series': {} }
                 for serie in self.measure_map[measure][measure_index+1]:
@@ -267,7 +267,7 @@ class DatabaseDataSource(object):
                 result_data[items[item][0]]['series'][items[item][1]].append(row[item+1])
 
         if self.measures.__contains__("sector"):
-            if not result_data.has_key('wind'):
+            if 'wind' not in result_data:
                 result_data['wind'] = {}
             result_data['wind']['sectors'] = {
                 "lbl" : ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'],
@@ -285,11 +285,11 @@ class DatabaseDataSource(object):
 
             for i in range(0, 16):
                 deg = 22.5*i
-                if sector_map.has_key(deg % 360):
+                if deg % 360 in sector_map:
                     result_data['wind']['sectors']['avg'][i % 16] = result_data['wind']['sectors']['avg'][i % 16] + sector_map[deg % 360][0];
                     result_data['wind']['sectors']['freq'][i % 16] = result_data['wind']['sectors']['freq'][i % 16] + sector_map[deg % 360][1];
 
-                if sector_gust_map.has_key(deg % 360):
+                if deg % 360 in sector_gust_map:
                     result_data['wind']['sectors']['max'][i % 16] = result_data['wind']['sectors']['max'][i % 16] + sector_gust_map[deg % 360];
 
         result_data['wind']['sectors']['freq'] = normalize(result_data['wind']['sectors']['freq'])

@@ -17,7 +17,7 @@
 ##  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-import base
+from . import base
 import datetime
 import wfcommon.meteo
 import itertools
@@ -102,7 +102,7 @@ class BufferCollector(object):
                     break
 
     def push(self, event):
-        heapq.heappush(self.queue, (event.timestamp, self.count.next(), event))
+        heapq.heappush(self.queue, (event.timestamp, next(self.count), event))
 
     def oldest(self):
         if len(self.queue) > 0:

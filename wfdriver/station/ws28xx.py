@@ -39,7 +39,7 @@ def detect():
 	try:
 		station = WS28xxStation()
 	except:
-		print "ws28xx: failed loading modules"
+		print("ws28xx: failed loading modules")
 		station = None
 	return station
 
@@ -64,7 +64,7 @@ class WS28xxStation(object):
 			TimeOut = HeavyWeatherService.CDataStore.getPreambleDuration(myCCommunicationService.DataStore) + HeavyWeatherService.CDataStore.getRegisterWaitTime(myCCommunicationService.DataStore)
 			ID=[0]
 			ID[0]=0
-			print "Press [v] key on Weather Station"
+			print("Press [v] key on Weather Station")
 			HeavyWeatherService.CDataStore.FirstTimeConfig(myCCommunicationService.DataStore,ID,TimeOut)
 
 		HeavyWeatherService.CDataStore.setDeviceRegistered(myCCommunicationService.DataStore, True);	#temp hack
@@ -119,7 +119,7 @@ class WS28xxStation(object):
 					send_event(e)
 
 				if abs(CWeatherTraits.WindNP() - myCCommunicationService.DataStore.CurrentWeather._WindSpeed) > 0.001:
-	    				e = generate_event('wind')
+					e = generate_event('wind')
 					e.create_child('mean')
 					e.mean.speed = myCCommunicationService.DataStore.CurrentWeather._WindSpeed
 					e.mean.dir = myCCommunicationService.DataStore.CurrentWeather._WindDirection * 360 / 16
@@ -128,7 +128,7 @@ class WS28xxStation(object):
 					e.gust.dir = myCCommunicationService.DataStore.CurrentWeather._GustDirection * 360 / 16
 					send_event(e)
 
-			except Exception, e:
+			except Exception as e:
 				self.logger.error(e)
 
 			time.sleep(5)

@@ -89,7 +89,7 @@ class MinFormula(object):
         self.index = index
 
     index = None
-    min = sys.maxint
+    min = sys.maxsize
 
     def append(self, sample):
         value = sample[self.index]
@@ -97,7 +97,7 @@ class MinFormula(object):
             self.min = min(self.min, value)
 
     def value(self):
-        if self.min == sys.maxint:
+        if self.min == sys.maxsize:
             return None
         else:
             return self.min
@@ -112,7 +112,7 @@ class MaxFormula(object):
         self.index = index
 
     index = None
-    max = -sys.maxint
+    max = -sys.maxsize
 
     def append(self, sample):
         value = sample[self.index]
@@ -120,7 +120,7 @@ class MaxFormula(object):
             self.max = max(self.max, value)
 
     def value(self):
-        if self.max == -sys.maxint:
+        if self.max == -sys.maxsize:
             return None
         else:
             return self.max

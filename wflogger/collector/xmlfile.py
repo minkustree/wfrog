@@ -17,7 +17,7 @@
 ##  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-import base
+from . import base
 import time
 import os.path
 from lxml import etree
@@ -98,7 +98,7 @@ class XmlFileCollector(base.BaseCollector):
         time_elt = element(self.doc, 'time')
         time_elt.text = time.strftime("%Y-%m-%d %H:%M:%S")
 
-        doc_string = etree.tostring(self.doc)
+        doc_string = etree.tostring(self.doc, encoding=str)
 
         self.logger.debug("Flushing: %s to %s", doc_string, self.path)
 

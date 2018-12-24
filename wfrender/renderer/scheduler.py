@@ -56,7 +56,7 @@ class SchedulerRenderer(object):
             self.logger.debug("Rendering.")
             try:
                 self.renderer.render(data=data, context=context)
-            except Exception, e:
+            except Exception as e:
                 self.logger.exception(e)
             time.sleep(self.period)
 

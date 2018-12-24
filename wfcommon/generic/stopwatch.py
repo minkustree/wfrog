@@ -16,7 +16,7 @@
 ##  You should have received a copy of the GNU General Public License
 ##  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import wrapper
+from . import wrapper
 import logging
 import time
 
@@ -47,7 +47,7 @@ class StopWatchElement(wrapper.ElementWrapper):
         result = self.target.__getattribute__(attr).__call__(*args, **keywords)
         duration = time.clock() - start
 
-        if self.measures.has_key(attr):
+        if attr in self.measures:
             measure = self.measures.get(attr)
             measure = (duration, measure[1]+duration, measure[2]+1)
         else:

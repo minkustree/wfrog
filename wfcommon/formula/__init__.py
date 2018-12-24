@@ -17,45 +17,45 @@
 ##  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import yaml
-import base
-import wind
-import temp
+from . import base
+from . import wind
+from . import temp
 
 class YamlCountFormula(base.CountFormula, yaml.YAMLObject):
-    yaml_tag = u'!count'
+    yaml_tag = '!count'
 
 class YamlAverageFormula(base.AverageFormula, yaml.YAMLObject):
-    yaml_tag = u'!avg'
+    yaml_tag = '!avg'
 
 class YamlLastFormula(base.LastFormula, yaml.YAMLObject):
-    yaml_tag = u'!last'
+    yaml_tag = '!last'
 
 class YamlMinFormula(base.MinFormula, yaml.YAMLObject):
-    yaml_tag = u'!min'
+    yaml_tag = '!min'
 
 class YamlMaxFormula(base.MaxFormula, yaml.YAMLObject):
-    yaml_tag = u'!max'
+    yaml_tag = '!max'
 
 class YamlSumFormula(base.SumFormula, yaml.YAMLObject):
-    yaml_tag = u'!sum'
+    yaml_tag = '!sum'
 
 class YamlPredominantWindFormula(wind.PredominantWindFormula, yaml.YAMLObject):
-    yaml_tag = u'!predominant'
+    yaml_tag = '!predominant'
 
 class YamlWindSectorAverageFormula(wind.WindSectorAverageFormula, yaml.YAMLObject):
-    yaml_tag = u'!sector-avg'
+    yaml_tag = '!sector-avg'
 
 class YamlWindSectorMaxFormula(wind.WindSectorMaxFormula, yaml.YAMLObject):
-    yaml_tag = u'!sector-max'
+    yaml_tag = '!sector-max'
 
 class YamlWindSectorFrequencyFormula(wind.WindSectorFrequencyFormula, yaml.YAMLObject):
-    yaml_tag = u'!sector-freq'
+    yaml_tag = '!sector-freq'
 
 class YamlHeatIndexMaxFormula(temp.HeatIndexMaxFormula, yaml.YAMLObject):
-    yaml_tag = u'!heatindex'
+    yaml_tag = '!heatindex'
 
 class YamlHumidexMaxFormula(temp.HumidexMaxFormula, yaml.YAMLObject):
-    yaml_tag = u'!humidex'
+    yaml_tag = '!humidex'
 
 class YamlWindChillMinFormula(temp.WindChillMinFormula, yaml.YAMLObject):
-    yaml_tag = u'!windchill'
+    yaml_tag = '!windchill'

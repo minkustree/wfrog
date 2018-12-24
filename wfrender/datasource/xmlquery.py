@@ -62,7 +62,7 @@ class CurrentConditionsXmlDataSource(object):
         result['wind']['dir'] = 'N'
         result['wind']['unit'] = "m/s"
         result['info'] = {}
-        result['info']['timestamp'] = datetime(2001, 01, 01)
+        result['info']['timestamp'] = datetime(2001, 0o1, 0o1)
 
         try:
             dom = xml.dom.minidom.parse(self.path)

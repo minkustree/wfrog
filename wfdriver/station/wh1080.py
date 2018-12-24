@@ -103,9 +103,9 @@ class WH1080Station(object):
                                     e.gust.dir = None
                                 send_event(e)
 
-                        except Exception, e:
+                        except Exception as e:
                             self.logger.error(e)
-            except IOError, e:
+            except IOError as e:
                 self.logger.error('Exception IOError: ' + str(e))
             finally:
                 time.sleep(30)

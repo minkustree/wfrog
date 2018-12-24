@@ -26,7 +26,8 @@ import wfcommon.utils
 import logging
 import time
 import threading
-from base import BaseStation
+from .base import BaseStation
+from functools import reduce
 
 class WMR928NXStation(BaseStation):
     '''
@@ -62,7 +63,7 @@ class WMR928NXStation(BaseStation):
     weatherStatusMap = {0xc: 'Sunny', 0x6: 'Half cloudy', 0x2: 'Cloudy', 0x3: 'rainy'}
     
     def _list2bytes(self, d):
-        return reduce(lambda a, b: a + b, map(lambda a: "%02X " % a, d))
+        return reduce(lambda a, b: a + b, ["%02X " % a for a in d])
 
     def _decode_bcd(self, bcd):
         return(bcd & 0xf) + ((bcd & 0xf0) >> 4) * 10
@@ -148,7 +149,7 @@ class WMR928NXStation(BaseStation):
                     pass
             else:
                 # data received and added to input buffer
-                n_buffer = map(lambda x: ord(x), buffer)
+                n_buffer = [ord(x) for x in buffer]
                 self.logger.debug("Serial RAW DATA: %s" % self._list2bytes(n_buffer))
                 input_buffer += n_buffer
 

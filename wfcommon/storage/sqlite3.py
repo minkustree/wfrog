@@ -18,7 +18,7 @@
 ##  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-import base
+from . import base
 import wfcommon.database
 
 class Sqlite3Storage(base.DatabaseStorage):

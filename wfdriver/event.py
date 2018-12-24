@@ -16,7 +16,7 @@
 ##  You should have received a copy of the GNU General Public License
 ##  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import StringIO
+import io
 
 class Element(object):
     
@@ -39,13 +39,13 @@ class Element(object):
     def __str__(self):
         # Trivial XML serialization. If the WESTEP protocol is extended, 
         # consider using real XML construction.
-        result = StringIO.StringIO()
-        if self.__dict__.keys().__contains__('_type'):
+        result = io.StringIO()
+        if list(self.__dict__.keys()).__contains__('_type'):
             result.write('<' + self._type + '>')
         for child in self.children:
             if not child == '_type':
                 result.write('<' + child + '>' + str(self.__dict__[child]) + '</' + child + '>')
-        if self.__dict__.keys().__contains__('_type'):
+        if list(self.__dict__.keys()).__contains__('_type'):
             result.write('</' + self._type + '>')
 
         return result.getvalue()
