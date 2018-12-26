@@ -103,7 +103,7 @@ class CsvStorage(object):
                 if ts < from_timestamp:
                     continue
                 if ts >= to_timestamp:
-                    raise StopIteration
+                    return
                 sample = line[1:]
                 sample[0] = datetime.fromtimestamp(ts)
                 length = len(sample)
