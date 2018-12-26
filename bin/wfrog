@@ -24,11 +24,17 @@
 import sys, os, string, os.path
 WFROG_HOME='.'
 this_script=os.path.abspath(os.path.realpath(sys.argv[0]))
-if sys.platform != 'win32' and string.find(this_script, os.sep+'wfrog') != -1:
+# In the Windows distribution build, wfrog.exe is at the root of $WFROG_HOME
+# In the source and non-windows builds, wfrog is at$ WFROG_HOME\bin\wfrog
+# As it's possible to run from source on windows, let's assume that if
+# the scripts ends in .exe then it's at the root of the distribution
+if this_script.endswith('.exe'): # assume <root>\wfrog.exe
+    WFROG_HOME=os.path.normpath(os.path.join(this_script, os.pardir))
+elif this_script.find(os.sep+'wfrog') != -1: # assume <root>/bin/wfrog
     WFROG_HOME=os.path.normpath(os.path.join(this_script, os.pardir, os.pardir))
     sys.path.insert(0, WFROG_HOME)
-if sys.platform == 'win32':
-    WFROG_HOME=os.path.normpath(os.path.join(this_script, os.pardir))
+else: # assume 'wfrog', no need to path mangle
+    pass
 if hasattr(os, "getuid") and os.getuid() != 0:
     sys.path.insert(0, os.path.abspath(os.getcwd()))
 
