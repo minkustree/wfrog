@@ -44,13 +44,13 @@ class CsvStorage(object):
     def write_sample(self, sample, context={}):
         self.logger.debug(sample)
         if os.path.exists(self.path):
-            file = open(self.path, 'a')
+            file = open(self.path, 'a', newline='')
             writer = csv.writer(file)
         else:
             dir = os.path.realpath(os.path.dirname(self.path))
             if not os.path.exists(dir):
                 os.makedirs(dir)
-            file = open(self.path, 'w')
+            file = open(self.path, 'w', newline='')
             writer = csv.writer(file)
             writer.writerow(self.columns)
             file.flush()
