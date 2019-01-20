@@ -87,7 +87,7 @@ class CsvStorage(object):
     def samples(self, from_time=datetime.fromtimestamp(0), to_time=datetime.now(), context={}):
         if not os.path.exists(self.path):
             self.logger.warning("File '"+self.path+"' not found")
-            raise StopIteration
+            return
         from_timestamp = int(time.mktime(from_time.timetuple()))
         file = self._position_cursor(from_timestamp)
         to_timestamp = time.mktime(to_time.timetuple())
