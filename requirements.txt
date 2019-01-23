@@ -1,0 +1,4 @@
+pyyaml
+lxml
+Cheetah3
+git+https://github.com/minkustree/pygooglechart.git#egg=pygooglechart
