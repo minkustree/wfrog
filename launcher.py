@@ -36,24 +36,30 @@ def get_home_wfrog_dir():
     else:
         return os.path.expanduser("~"+getpass.getuser())+'/.wfrog/'
 
-def get_opt_parser():
-    import optparse
-    opt_parser = optparse.OptionParser(conflict_handler='resolve')
 
-    opt_parser.add_option("-B", "--backend", action="store_true", dest="backend", help="Starts the logger and the driver only.")
-    opt_parser.add_option("-R", "--renderer", action="store_true", dest="renderer", help="Starts the renderer only.")
-    opt_parser.add_option("-C", "--customize", action="store_true", dest="customize", help="Prepare the config files for customizing wfrog. Safe operation, it does not overwrite an existing custom config.")
-    opt_parser.add_option("-S", "--setup", action="store_true", dest="setup", help="Define the settings interactively.")
-    opt_parser.add_option('-w', '--cwd', action='store_true', dest='cwd', help='Use the current working directory for data instead of the default one.')
-    opt_parser.add_option("-f", "--config", dest="config_file", help="Configuration file (in yaml)", metavar="CONFIG_FILE")
-    opt_parser.add_option("-s", "--settings", dest="settings", help="Settings file (in yaml)", metavar="SETTINGS_FILE")
-    opt_parser.add_option("-m", "--mute", action="store_true", dest="mute", help="Skip the setup of user settings. Do not issues any questions but fails if settings are missing.")
-
-    return opt_parser
 
 class ComponentManager():
-    def __init__(self, opt_parser):
+
+    @classmethod
+    def default_opt_parser(cls):
+        import optparse
+        opt_parser = optparse.OptionParser(conflict_handler='resolve')
+
+        opt_parser.add_option("-B", "--backend", action="store_true", dest="backend", help="Starts the logger and the driver only.")
+        opt_parser.add_option("-R", "--renderer", action="store_true", dest="renderer", help="Starts the renderer only.")
+        opt_parser.add_option("-C", "--customize", action="store_true", dest="customize", help="Prepare the config files for customizing wfrog. Safe operation, it does not overwrite an existing custom config.")
+        opt_parser.add_option("-S", "--setup", action="store_true", dest="setup", help="Define the settings interactively.")
+        opt_parser.add_option('-w', '--cwd', action='store_true', dest='cwd', help='Use the current working directory for data instead of the default one.')
+        opt_parser.add_option("-f", "--config", dest="config_file", help="Configuration file (in yaml)", metavar="CONFIG_FILE")
+        opt_parser.add_option("-s", "--settings", dest="settings", help="Settings file (in yaml)", metavar="SETTINGS_FILE")
+        opt_parser.add_option("-m", "--mute", action="store_true", dest="mute", help="Skip the setup of user settings. Do not issues any questions but fails if settings are missing.")
+
+        return opt_parser
+
+    def __init__(self, opt_parser=None):
         ''' Note: modifies opt_parser options '''
+        if not opt_parser:
+            opt_parser = ComponentManager.default_opt_parser()
         self.candidate_logger = wflogger.wflogger.Logger(opt_parser)
         self.candidate_renderer = wfrender.wfrender.RenderEngine(opt_parser)
         (self.options, _) = opt_parser.parse_args()
@@ -66,20 +72,27 @@ class ComponentManager():
 
 class SettingsAndConfigManager():
     SETTINGS_FILE = 'settings.yaml'
+    GLOBAL_CONF_DIR = '/etc/wfrog'
 
-    def __init__(self, options, global_conf_dir, wfrog_home, wfrog_root):
-        self.options = options
+    def __init__(self,  wfrog_home, wfrog_root, global_conf_dir=GLOBAL_CONF_DIR,
+                        settings=None, config_file=None, backend=False, renderer=False):
         self.global_conf_dir = global_conf_dir
         self.wfrog_home = wfrog_home
         self.wfrog_root = wfrog_root
+
+        # Broken out from options to remove dependency on parsed options structure
+        self.settings = settings
+        self.config_file = config_file
+        self.backend = backend
+        self.renderer = renderer
 
         self._init_settings()
         self._init_config()
 
     def _init_settings(self):
         self.settings_def = os.path.normpath(os.path.abspath(os.path.join(self.wfrog_root, 'wfcommon', 'config','settings-definition.yaml')))
-        if self.options.settings:
-            self.settings = os.path.abspath(self.options.settings)
+        if self.settings:
+            self.settings = os.path.abspath(self.settings)
         else:
             candidates = [ os.path.join(self.wfrog_home, self.SETTINGS_FILE),
                            os.path.join(self.global_conf_dir, self.SETTINGS_FILE),
@@ -90,10 +103,10 @@ class SettingsAndConfigManager():
                     break
 
     def _init_config(self):
-        if not self.options.config_file:
-            if self.options.backend:
+        if not self.config_file:
+            if self.backend:
                 config_file = os.path.join('wflogger','config','wflogger.yaml')
-            elif self.options.renderer:
+            elif self.renderer:
                 config_file = os.path.join('wfrender','config','wfrender.yaml')
             else:
                 config_file = os.path.join('wflogger','config','wfrog.yaml')
@@ -122,13 +135,17 @@ class SettingsAndConfigManager():
             settings_file = os.path.join(self.wfrog_home, self.SETTINGS_FILE)
         self.settings = wflogger.setup.SetupClient().setup_settings(self.settings_def, self.settings, settings_file)
 
-def main(wfrog_home, wfrog_root, opt_parser):
-    GLOBAL_CONF_DIR = '/etc/wfrog/'
+def main(wfrog_home=get_home_wfrog_dir(), 
+         wfrog_root=os.path.dirname(os.path.realpath(__file__)) ):
 
-    component_manager = ComponentManager(opt_parser)
+    component_manager = ComponentManager()
     options = component_manager.options
 
-    sac_manager = SettingsAndConfigManager(options, GLOBAL_CONF_DIR, wfrog_home, wfrog_root)
+    sac_manager = SettingsAndConfigManager(wfrog_home, wfrog_root, 
+                    settings=options.settings, 
+                    config_file=options.config_file, 
+                    backend=options.backend, 
+                    renderer=options.renderer)
 
     user = getpass.getuser()
 
@@ -159,7 +176,4 @@ def main(wfrog_home, wfrog_root, opt_parser):
     component_manager.get_component().run(sac_manager.get_config_file(), sac_manager.get_settings())
 
 if __name__=='__main__':
-    wfrog_home = get_home_wfrog_dir()
-    wfrog_root = os.path.dirname(os.path.realpath(__file__))
-    opt_parser = get_opt_parser()
-    main(wfrog_home, wfrog_root, opt_parser)
+    main()
