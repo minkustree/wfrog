@@ -1,9 +1,13 @@
 import socket
+import os.path
 
 import win32service
 import win32serviceutil
 import win32event
 import servicemanager
+
+from launcher import ComponentManager, SettingsAndConfigManager
+
 
 class WFrogService(win32serviceutil.ServiceFramework):
     _svc_name_ = 'wfrog'
@@ -11,7 +15,8 @@ class WFrogService(win32serviceutil.ServiceFramework):
     _svc_description_ = 'Weather station data logging and reporting service'
 
     # TODO: Determine this path better
-    _exe_name_ = 'D:\\Andy\\Documents\\Source\\wfrog\\env\\Scripts\\pythonservice.exe'
+    _exe_name_ = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                              'env', 'Scripts', 'pythonservice.exe')
 
     @classmethod
     def handle_command_line(cls):
@@ -49,13 +54,16 @@ class WFrogService(win32serviceutil.ServiceFramework):
                               (self._svc_name_, ''))
 
     def start(self):
-        pass
-
+        self.cm = ComponentManager()
+        self.sacm = SettingsAndConfigManager()
+        
     def stop(self):
-        win32event.SetEvent(self.hWaitStop)
+        self.cm.get_component().stop()
+        # win32event.SetEvent(self.hWaitStop)
 
     def main(self):
-        win32event.WaitForSingleObject(self.hWaitStop, win32event.INFINITE)
+        self.cm.get_component().run(self.sacm.get_config_file(), self.sacm.get_settings())
+        # win32event.WaitForSingleObject(self.hWaitStop, win32event.INFINITE)
 
         
 

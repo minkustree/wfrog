@@ -74,8 +74,10 @@ class SettingsAndConfigManager():
     SETTINGS_FILE = 'settings.yaml'
     GLOBAL_CONF_DIR = '/etc/wfrog'
 
-    def __init__(self,  wfrog_home, wfrog_root, global_conf_dir=GLOBAL_CONF_DIR,
-                        settings=None, config_file=None, backend=False, renderer=False):
+    def __init__(self, wfrog_home=get_home_wfrog_dir(), 
+                       wfrog_root=os.path.dirname(os.path.realpath(__file__)),
+                       global_conf_dir=GLOBAL_CONF_DIR,
+                       settings=None, config_file=None, backend=False, renderer=False):
         self.global_conf_dir = global_conf_dir
         self.wfrog_home = wfrog_home
         self.wfrog_root = wfrog_root

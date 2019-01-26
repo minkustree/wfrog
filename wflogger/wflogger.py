@@ -31,7 +31,7 @@ import optparse
 import logging
 import time
 import wfcommon.config
-from threading import Thread
+from threading import Thread, Event
 from queue import Queue, Full
 import copy
 
@@ -88,6 +88,8 @@ logging [logging configuration] (optional):
         self.configurer.add_options(opt_parser)
         self.opt_parser = opt_parser
 
+        self.stop_event = Event()
+
     def configure(self, config_file, settings_file):
         # Parse the options and create object trees from configuration
         (options, args) = self.opt_parser.parse_args()
@@ -128,7 +130,12 @@ logging [logging configuration] (optional):
             except Exception:
                 self.logger.exception("Could not send event to "+str(self.collector))
 
+    def stop(self):
+        self.stop_event.set()
+        
     def run(self, config_file="config/wflogger.yaml", settings_file=None):
+        self.stop_event.clear()
+
         self.configure(config_file, settings_file)
 
         # Start the logger thread
@@ -165,10 +172,10 @@ logging [logging configuration] (optional):
             renderer_thread.setDaemon(True)
             renderer_thread.start()
 
-        # Wait for ever
+        # Wait for ever, or until interrupted
         try:
-            while True:
-                time.sleep(999999)
+            while not self.stop_event.is_set():
+                self.stop_event.wait(3)
         except KeyboardInterrupt:
             pass
 
