@@ -61,7 +61,7 @@ logging [logging configuration] (optional):
     queue_size = 10
     configurer = None
 
-    def __init__(self, opt_parser=optparse.OptionParser()):
+    def __init__(self, opt_parser=optparse.OptionParser(), argv=None):
 
         # Prepare the configurer
         module_map = (
@@ -72,12 +72,13 @@ logging [logging configuration] (optional):
 
         self.configurer = wfcommon.config.Configurer(module_map)
         self.opt_parser = opt_parser
+        self.argv = argv
         self.configurer.add_options(self.opt_parser)
 
     def configure(self, config_file, settings_file, embedded):
         
         # Parse the options and create object trees from configuration
-        (options, args) = self.opt_parser.parse_args()
+        (options, args) = self.opt_parser.parse_args(self.argv)
 
         (config, context) = self.configurer.configure(options, self, config_file, settings_file, embedded)
 

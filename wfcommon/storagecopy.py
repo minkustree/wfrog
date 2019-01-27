@@ -32,7 +32,7 @@ class StorageCopy(object):
 
     logger = logging.getLogger('storagecopy')
 
-    def __init__(self, config_file=None):
+    def __init__(self, config_file=None, argv=None):
 
         # Prepare the configurer
         module_map = (
@@ -49,7 +49,7 @@ class StorageCopy(object):
         configurer.add_options(opt_parser)
 
         # Parse the options and create object trees from configuration
-        (options, args) = opt_parser.parse_args()
+        (options, args) = opt_parser.parse_args(args=argv)
 
         (config, context) = configurer.configure(options, self, config_file)
 

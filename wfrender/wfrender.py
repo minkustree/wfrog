@@ -60,7 +60,7 @@ logging [logging configuration] (optional):
     opt_parser = None
     embedded = False
 
-    def __init__(self, opt_parser=optparse.OptionParser()):
+    def __init__(self, opt_parser=optparse.OptionParser(), argv=None):
         """Creates the engine using a specific configurer or a yaml configurer if none specified"""
 
         self.configurer = config.RendererConfigurer(opt_parser)
@@ -68,9 +68,10 @@ logging [logging configuration] (optional):
         opt_parser.add_option("-D", "--data", dest="data_string", help="Passes specific data value/pairs to renderers", metavar="key1=value1,key2=value2")
         opt_parser.add_option("-O", dest="output", action="store_true", help="Outputs the renderer result (if any) on standard output")
         self.opt_parser = opt_parser
+        self.argv = argv
 
     def configure(self, embedded):
-        (options, args) = self.opt_parser.parse_args()
+        (options, args) = self.opt_parser.parse_args(args=self.argv)
         self.configurer.embedded = embedded
 
         if options.data_string:
@@ -125,6 +126,11 @@ logging [logging configuration] (optional):
 
     def run(self, config_file='config/wfrender.yaml', settings_file=None, embedded=False):
         self.process(config_file, settings_file, embedded)
+
+    def stop(self):
+        if self.root_renderer and hasattr(self.root_renderer, 'close'):
+            self.root_renderer.close()
+
 
 if __name__ == "__main__":
     engine = RenderEngine()

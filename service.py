@@ -54,7 +54,7 @@ class WFrogService(win32serviceutil.ServiceFramework):
                               (self._svc_name_, ''))
 
     def start(self):
-        self.cm = ComponentManager()
+        self.cm = ComponentManager(argv=['-dv'])
         self.sacm = SettingsAndConfigManager()
         
     def stop(self):

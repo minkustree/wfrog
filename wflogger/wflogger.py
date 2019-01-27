@@ -74,7 +74,7 @@ logging [logging configuration] (optional):
     config_file = None
     opt_parser = None
 
-    def __init__(self, opt_parser=optparse.OptionParser(conflict_handler='resolve')):
+    def __init__(self, opt_parser=optparse.OptionParser(conflict_handler='resolve'), argv=None):
 
         # Prepare the configurer
         module_map = (
@@ -87,12 +87,13 @@ logging [logging configuration] (optional):
 
         self.configurer.add_options(opt_parser)
         self.opt_parser = opt_parser
+        self.argv = argv
 
         self.stop_event = Event()
 
     def configure(self, config_file, settings_file):
         # Parse the options and create object trees from configuration
-        (options, args) = self.opt_parser.parse_args()
+        (options, args) = self.opt_parser.parse_args(args=self.argv)
         (config, self.context) = self.configurer.configure(options, self, config_file, settings_file)
 
         self.config_file = self.configurer.config_file
@@ -154,7 +155,7 @@ logging [logging configuration] (optional):
         if 'wfdriver' in self.embedded:
             self.logger.debug("Starting embedded wfdriver")
             import wfdriver.wfdriver
-            driver = wfdriver.wfdriver.Driver(self.opt_parser)
+            driver = wfdriver.wfdriver.Driver(self.opt_parser, argv=self.argv)
             driver_thread = Thread(target=driver.run, kwargs={
                 'config_file':os.path.join(dir_name, self.embedded['wfdriver']['config']),
                 'settings_file':settings_file,
@@ -164,7 +165,7 @@ logging [logging configuration] (optional):
         if 'wfrender' in self.embedded:
             self.logger.debug("Starting embedded wfrender")
             import wfrender.wfrender
-            renderer = wfrender.wfrender.RenderEngine(self.opt_parser)
+            renderer = wfrender.wfrender.RenderEngine(self.opt_parser, argv=self.argv)
             renderer_thread = Thread(target=renderer.run, kwargs={
                 'config_file':os.path.join(dir_name, self.embedded['wfrender']['config']),
                 'settings_file':settings_file,

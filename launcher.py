@@ -56,13 +56,13 @@ class ComponentManager():
 
         return opt_parser
 
-    def __init__(self, opt_parser=None):
+    def __init__(self, opt_parser=None, argv=None):
         ''' Note: modifies opt_parser options '''
         if not opt_parser:
             opt_parser = ComponentManager.default_opt_parser()
-        self.candidate_logger = wflogger.wflogger.Logger(opt_parser)
-        self.candidate_renderer = wfrender.wfrender.RenderEngine(opt_parser)
-        (self.options, _) = opt_parser.parse_args()
+        self.candidate_logger = wflogger.wflogger.Logger(opt_parser, argv=argv)
+        self.candidate_renderer = wfrender.wfrender.RenderEngine(opt_parser, argv=argv)
+        (self.options, _) = opt_parser.parse_args(args=argv)
     
     def get_component(self):
         if self.options.renderer:
